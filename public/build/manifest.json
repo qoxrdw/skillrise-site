@@ -1,0 +1,37 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-DPb2kK2_.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/add-question.js": {
+    "file": "assets/add-question-BWSRLFOw.js",
+    "name": "add-question",
+    "src": "resources/js/add-question.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CFIGDe36.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/delete-confirm.js": {
+    "file": "assets/delete-confirm-Bgi9C5IC.js",
+    "name": "delete-confirm",
+    "src": "resources/js/delete-confirm.js",
+    "isEntry": true
+  },
+  "resources/js/notes-create.js": {
+    "file": "assets/notes-create-ul5xQwrB.js",
+    "name": "notes-create",
+    "src": "resources/js/notes-create.js",
+    "isEntry": true
+  },
+  "resources/js/notes-edit.js": {
+    "file": "assets/notes-edit-DIkMlqvo.js",
+    "name": "notes-edit",
+    "src": "resources/js/notes-edit.js",
+    "isEntry": true
+  }
+}

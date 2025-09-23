@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll("form.delete-form").forEach(e=>{e.addEventListener("submit",function(t){confirm("Вы точно хотите удалить эту заметку?")||t.preventDefault()})})});
