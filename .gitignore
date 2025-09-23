@@ -1,0 +1,27 @@
+@'
+# Dependencies
+/vendor/
+/node_modules/
+
+# Laravel
+/public/storage
+/storage/*.key
+/.env
+/.env.*
+/storage/logs/*.log
+/storage/framework/cache/**
+/storage/framework/sessions/**
+/storage/framework/views/**
+/bootstrap/cache/*.php
+
+# Build artifacts
+/public/build/**
+/public/*.zip
+
+# IDEs and OS
+.idea/
+.vscode/
+Thumbs.db
+*.log
+*.tmp
+'@ | Out-File -Encoding utf8 .gitignore

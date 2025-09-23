@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Дополнительные утилиты под макет */
+@layer utilities {
+  .pill-input {
+    @apply h-9 rounded-full border border-gray-300 px-4;
+  }
+  .card-minimal {
+    @apply border border-gray-300 rounded-xl p-5 bg-white;
+  }
+}
