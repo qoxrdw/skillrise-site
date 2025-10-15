@@ -1,0 +1,9 @@
+font-family: Work Sans;
+font-weight: 400;
+font-style: Regular;
+font-size: 33px; (может быть разный)
+leading-trim: NONE;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+vertical-align: middle;

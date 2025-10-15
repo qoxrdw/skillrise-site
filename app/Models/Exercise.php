@@ -24,4 +24,5 @@ class Exercise extends Model
     {
         return $this->belongsTo(Track::class);
     }
+
 }

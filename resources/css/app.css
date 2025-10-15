@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+
+[x-cloak] {
+    display: none !important;
+}
 /* Дополнительные утилиты под макет */
 @layer utilities {
   .pill-input {
@@ -9,5 +13,114 @@
   }
   .card-minimal {
     @apply border border-gray-300 rounded-xl p-5 bg-white;
+  }
+}
+
+/* Кастомные стили для точного соответствия дизайну Figma */
+@layer base {
+  body {
+    font-family: 'Work Sans', sans-serif;
+  }
+}
+
+@layer components {
+  /* Стили для боковой панели */
+  .figma-sidebar {
+    position: absolute;
+    width: 614px;
+    height: 1333px;
+    left: 0px;
+    top: -53px;
+    background: #000000;
+    opacity: 0.1;
+    border-radius: 15px;
+  }
+
+  /* Стили для навигации в боковой панели */
+  .figma-nav-text {
+    position: absolute;
+    width: 209px;
+    height: 67px;
+    left: 100px;
+    top: 377px;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 25px;
+    line-height: 29px;
+    display: flex;
+    align-items: flex-end;
+    color: #000000;
+  }
+
+  /* Стили для поисковой строки */
+  .figma-search {
+    box-sizing: border-box;
+    position: absolute;
+    width: 551px;
+    height: 61px;
+    left: 861px;
+    top: 47px;
+    border: 2px solid #000000;
+    border-radius: 30px;
+  }
+
+  .figma-search-text {
+    position: absolute;
+    width: 543px;
+    height: 61px;
+    left: 861px;
+    top: 47px;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 35px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #000000;
+    opacity: 0.6;
+  }
+
+  /* Стили для кнопки создания трека */
+  .figma-create-track {
+    box-sizing: border-box;
+    position: absolute;
+    width: 959px;
+    height: 111px;
+    left: 861px;
+    top: 314px;
+    border: 2px solid #000000;
+    border-radius: 30px;
+  }
+
+  .figma-create-track-text {
+    position: absolute;
+    width: 518px;
+    height: 81px;
+    left: 1002px;
+    top: 330px;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 35px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+    opacity: 0.6;
+  }
+
+  /* Стили для карточек треков */
+  .figma-track-card {
+    box-sizing: border-box;
+    position: absolute;
+    width: 959px;
+    height: 112px;
+    left: 861px;
+    background: #FFFFFF;
+    border: 2px solid #000000;
+    border-radius: 30px;
   }
 }

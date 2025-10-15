@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Note form not found');
         return;
     }
-    console.log('Note form found');
 
     form.addEventListener('submit', function(event) {
         console.log('Submit event triggered');
@@ -41,9 +40,5 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             return;
         }
-        const content = quill.root.innerHTML;
-        console.log('Quill content:', content);
-        contentInput.value = content;
-        console.log('Content set to:', contentInput.value);
     });
 });

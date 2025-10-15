@@ -1,0 +1,162 @@
+/* Frame 13 */
+
+position: relative;
+width: 1920px;
+height: 1200px;
+
+background: #FFFFFF;
+
+
+/* Rectangle 2 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 415px;
+height: 112px;
+left: 970px;
+top: 709px;
+
+background: rgba(217, 217, 217, 0.6);
+border: 2px solid #000000;
+border-radius: 20px;
+
+
+/* Добро пожаловать в SkillRise! */
+
+position: absolute;
+width: 850px;
+height: 194px;
+left: 535px;
+top: 314px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 83px;
+line-height: 97px;
+text-align: center;
+
+color: #000000;
+
+
+
+/* Ваша персональная платформа для организации обучения */
+
+position: absolute;
+width: 850px;
+height: 112px;
+left: 535px;
+top: 511px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 37px;
+line-height: 43px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* Войти */
+
+position: absolute;
+width: 415px;
+height: 112px;
+left: 535px;
+top: 709px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 33px;
+line-height: 39px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* Зарегистрироваться */
+
+position: absolute;
+width: 415px;
+height: 112px;
+left: 970px;
+top: 709px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 33px;
+line-height: 39px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* Rectangle 1 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 415px;
+height: 112px;
+left: 535px;
+top: 709px;
+
+border: 2px solid #000000;
+border-radius: 20px;
+
+
+/* Group 2 */
+
+position: absolute;
+width: 89px;
+height: 58.43px;
+left: 100px;
+top: 50px;
+
+
+
+/* Vector */
+
+position: absolute;
+width: 49.75px;
+height: 58.43px;
+left: 139.25px;
+top: 50px;
+
+background: #000000;
+
+
+/* Vector */
+
+position: absolute;
+width: 33.91px;
+height: 39.12px;
+left: 109.12px;
+top: 50px;
+
+background: #000000;
+
+
+/* Vector */
+
+position: absolute;
+width: 35.21px;
+height: 38.26px;
+left: 100px;
+top: 70px;
+
+background: #000000;
+transform: rotate(180deg);

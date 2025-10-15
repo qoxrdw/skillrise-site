@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'figma' => [
+        'token' => env('FIGMA_TOKEN', ''),
+        'verify' => env('FIGMA_VERIFY', true),
+    ],
+
 ];

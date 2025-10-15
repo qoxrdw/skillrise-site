@@ -1,0 +1,354 @@
+/* трек */
+
+position: relative;
+width: 959px;
+height: 535px;
+
+
+
+/* Group 14 */
+
+position: absolute;
+width: 959px;
+height: 535px;
+left: 0px;
+top: 0px;
+
+
+
+/* Rectangle 63 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 535px;
+left: 0px;
+top: 0px;
+
+background: #FFFFFF;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Rectangle 59 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 287px;
+height: 115px;
+left: 653px;
+top: 126px;
+
+background: #EEEEEE;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Rectangle 60 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 287px;
+height: 112px;
+left: 653px;
+top: 261px;
+
+background: #EEEEEE;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Rectangle 61 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 109px;
+left: 0px;
+top: 0px;
+
+background: #EEEEEE;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Rectangle 62 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 610px;
+height: 115px;
+left: 23px;
+top: 126px;
+
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Биология, 9 класс */
+
+position: absolute;
+width: 518px;
+height: 81px;
+left: 141px;
+top: 14px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Генетика и наследственность */
+
+position: absolute;
+width: 518px;
+height: 80px;
+left: 68px;
+top: 125px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Задание 1 */
+
+position: absolute;
+width: 206px;
+height: 81px;
+left: 691px;
+top: 144px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Задание 5 */
+
+position: absolute;
+width: 206px;
+height: 81px;
+left: 691px;
+top: 276px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Rectangle 64 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 610px;
+height: 112px;
+left: 23px;
+top: 261px;
+
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Экосистемы и экология */
+
+position: absolute;
+width: 518px;
+height: 80px;
+left: 68px;
+top: 258px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Rectangle 65 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 917px;
+height: 112px;
+left: 23px;
+top: 392px;
+
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Эволюция и происхождение человека */
+
+position: absolute;
+width: 802px;
+height: 80px;
+left: 68px;
+top: 387px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Union */
+
+position: absolute;
+width: 28px;
+height: 18.41px;
+left: 40.2px;
+top: 47.8px;
+
+background: #000000;
+opacity: 0.6;
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 18.41px;
+height: 13.9px;
+left: 40.2px;
+top: 47.8px;
+
+background: #D9D9D9;
+transform: rotate(-90deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 18.41px;
+height: 14.11px;
+left: 54.09px;
+top: 47.8px;
+
+background: #D9D9D9;
+transform: matrix(0, -1, -1, 0, 0, 0);
+
+
+/* Union */
+
+position: absolute;
+width: 28px;
+height: 18.41px;
+left: 892px;
+top: 171px;
+
+background: #000000;
+opacity: 0.6;
+transform: rotate(-90deg);
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 18.41px;
+height: 13.9px;
+left: 892px;
+top: 185.1px;
+
+background: #D9D9D9;
+transform: rotate(-180deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 18.41px;
+height: 14.11px;
+left: 892px;
+top: 171px;
+
+background: #D9D9D9;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Union */
+
+position: absolute;
+width: 28px;
+height: 18.41px;
+left: 892px;
+top: 303px;
+
+background: #000000;
+opacity: 0.6;
+transform: rotate(-90deg);
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 18.41px;
+height: 13.9px;
+left: 892px;
+top: 317.1px;
+
+background: #D9D9D9;
+transform: rotate(-180deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 18.41px;
+height: 14.11px;
+left: 892px;
+top: 303px;
+
+background: #D9D9D9;
+transform: matrix(-1, 0, 0, 1, 0, 0);

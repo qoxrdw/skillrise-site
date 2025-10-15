@@ -1,0 +1,128 @@
+/* Стили фона */
+
+position: relative;
+width: 1920px;
+height: 1200px;
+
+background: #FFFFFF;
+
+
+/* Стили боковой серой панели */
+
+position: absolute;
+width: 614px;
+height: 1333px;
+left: 0px;
+top: -53px;
+
+background: #000000;
+opacity: 0.1;
+border-radius: 15px;
+
+
+/* Стили текста "шеринг", "мои треки", "главная" */
+
+position: absolute;
+width: 209px;
+height: 67px;
+left: 100px;
+top: 377px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: flex-end;
+
+color: #000000;
+
+
+
+/* Стили закругленного прямоугольника с надписью "создать трек", этот же стиль применяется к прямоугольникам для созданных треков */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 111px;
+left: 861px;
+top: 314px;
+
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Rectangle 52 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 112px;
+left: 861px;
+top: 445px;
+
+background: #FFFFFF;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Стили надписи "Создать трек" и для надписей созданных треков*/
+
+position: absolute;
+width: 518px;
+height: 81px;
+left: 1002px;
+top: 330px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+
+
+/* Стили для поисковой строки */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 551px;
+height: 61px;
+left: 861px;
+top: 47px;
+
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Стили текста для "Поиск треков и упражнений" */
+
+position: absolute;
+width: 543px;
+height: 61px;
+left: 861px;
+top: 47px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+opacity: 0.6;

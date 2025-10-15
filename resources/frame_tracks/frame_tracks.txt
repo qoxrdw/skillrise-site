@@ -1,0 +1,801 @@
+/* треки */
+
+position: relative;
+width: 1920px;
+height: 1200px;
+
+background: #FFFFFF;
+
+
+/* Rectangle 47 */
+
+position: absolute;
+width: 614px;
+height: 1333px;
+left: 0px;
+top: -53px;
+
+background: #000000;
+opacity: 0.1;
+border-radius: 15px;
+
+
+/* Мои треки */
+
+position: absolute;
+width: 209px;
+height: 85px;
+left: 100px;
+top: 277px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: flex-end;
+
+color: #000000;
+
+
+
+/* Главная */
+
+position: absolute;
+width: 209px;
+height: 67px;
+left: 100px;
+top: 162px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: flex-end;
+
+color: #000000;
+
+
+
+/* Уведомления */
+
+position: absolute;
+width: 209px;
+height: 67px;
+left: 100px;
+top: 228px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: flex-end;
+
+color: #000000;
+
+
+
+/* Упражнения */
+
+position: absolute;
+width: 189px;
+height: 66px;
+left: 100px;
+top: 628px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: flex-end;
+
+color: #000000;
+
+
+
+/* Заметки */
+
+position: absolute;
+width: 238px;
+height: 66px;
+left: 100px;
+top: 709px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: flex-end;
+
+color: #000000;
+
+
+
+/* Биология, 9 класс */
+
+position: absolute;
+width: 339px;
+height: 61px;
+left: 209px;
+top: 382px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Цифровая грамотность 2.0 */
+
+position: absolute;
+width: 339px;
+height: 61px;
+left: 209px;
+top: 447px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Коммуникация без стресса */
+
+position: absolute;
+width: 339px;
+height: 61px;
+left: 209px;
+top: 513px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Финансовая грамотнотность */
+
+position: absolute;
+width: 356px;
+height: 61px;
+left: 209px;
+top: 579px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 25px;
+line-height: 29px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Union */
+
+position: absolute;
+width: 89px;
+height: 58.43px;
+left: 100px;
+top: 45px;
+
+background: #000000;
+
+
+/* Vector */
+
+position: absolute;
+width: 49.75px;
+height: 58.43px;
+left: 139.25px;
+top: 45px;
+
+background: #000000;
+
+
+/* Vector */
+
+position: absolute;
+width: 33.91px;
+height: 39.12px;
+left: 109.12px;
+top: 45px;
+
+background: #000000;
+
+
+/* Vector */
+
+position: absolute;
+width: 35.21px;
+height: 38.26px;
+left: 100px;
+top: 65px;
+
+background: #000000;
+transform: rotate(180deg);
+
+
+/* Union */
+
+position: absolute;
+width: 18px;
+height: 11.83px;
+left: 251px;
+top: 344px;
+
+background: #000000;
+opacity: 0.6;
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 11.83px;
+height: 8.94px;
+left: 251px;
+top: 344px;
+
+background: #D9D9D9;
+transform: rotate(-90deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 11.83px;
+height: 9.07px;
+left: 259.93px;
+top: 344px;
+
+background: #D9D9D9;
+transform: matrix(0, -1, -1, 0, 0, 0);
+
+
+/* + */
+
+position: absolute;
+width: 89px;
+height: 61px;
+left: 871px;
+top: 340px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 54px;
+line-height: 63px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+opacity: 0.6;
+border: 0.5px solid #000000;
+
+
+/* Rectangle 51 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 111px;
+left: 861px;
+top: 314px;
+
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Rectangle 52 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 112px;
+left: 861px;
+top: 445px;
+
+background: #FFFFFF;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Создать трек */
+
+position: absolute;
+width: 518px;
+height: 81px;
+left: 1002px;
+top: 330px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Биология, 9 класс */
+
+position: absolute;
+width: 518px;
+height: 81px;
+left: 1002px;
+top: 462px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Ellipse 1 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 89px;
+height: 89px;
+left: 1731px;
+top: 34px;
+
+border: 3px solid #000000;
+
+
+/* Ellipse 11 (Stroke) */
+
+position: absolute;
+width: 60px;
+height: 60px;
+left: 1746px;
+top: 49px;
+
+background: #000000;
+
+
+/* Ellipse 13 */
+
+position: absolute;
+width: 7px;
+height: 7px;
+left: 1762px;
+top: 66px;
+
+background: #000000;
+
+
+/* Ellipse 14 */
+
+position: absolute;
+width: 7px;
+height: 7px;
+left: 1781px;
+top: 66px;
+
+background: #000000;
+
+
+/* Ellipse 12 (Stroke) */
+
+position: absolute;
+width: 34px;
+height: 19px;
+left: 1758px;
+top: 78px;
+
+background: #000000;
+
+
+/* Rectangle 2 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 551px;
+height: 61px;
+left: 861px;
+top: 47px;
+
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Поиск треков, упражнений */
+
+position: absolute;
+width: 543px;
+height: 61px;
+left: 861px;
+top: 47px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Group 3 */
+
+position: absolute;
+width: 32.71px;
+height: 36px;
+left: 880px;
+top: 58px;
+
+opacity: 0.6;
+
+
+/* Ellipse 15 (Stroke) */
+
+position: absolute;
+width: 23.25px;
+height: 23.25px;
+left: 880px;
+top: 58px;
+
+background: #000000;
+border: 0.5px solid #000000;
+transform: rotate(-38.59deg);
+
+
+/* Rectangle 46 */
+
+position: absolute;
+width: 3.93px;
+height: 13.58px;
+left: 900.86px;
+top: 81.16px;
+
+background: #000000;
+transform: rotate(-40.89deg);
+
+
+/* Union */
+
+position: absolute;
+width: 18px;
+height: 11.83px;
+left: 277px;
+top: 671px;
+
+background: #000000;
+opacity: 0.8;
+transform: rotate(-90deg);
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 11.83px;
+height: 8.94px;
+left: 277px;
+top: 680.06px;
+
+background: #D9D9D9;
+transform: rotate(-180deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 11.83px;
+height: 9.07px;
+left: 277px;
+top: 671px;
+
+background: #D9D9D9;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Union */
+
+position: absolute;
+width: 28px;
+height: 18.41px;
+left: 906px;
+top: 491px;
+
+background: #000000;
+opacity: 0.6;
+transform: rotate(-90deg);
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 18.41px;
+height: 13.9px;
+left: 906px;
+top: 505.1px;
+
+background: #D9D9D9;
+transform: rotate(-180deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 18.41px;
+height: 14.11px;
+left: 906px;
+top: 491px;
+
+background: #D9D9D9;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Rectangle 53 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 112px;
+left: 861px;
+top: 577px;
+
+background: #FFFFFF;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Цифровая грамотность 2.0 */
+
+position: absolute;
+width: 518px;
+height: 81px;
+left: 1002px;
+top: 594px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Union */
+
+position: absolute;
+width: 28px;
+height: 18.41px;
+left: 906px;
+top: 623px;
+
+background: #000000;
+opacity: 0.6;
+transform: rotate(-90deg);
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 18.41px;
+height: 13.9px;
+left: 906px;
+top: 637.1px;
+
+background: #D9D9D9;
+transform: rotate(-180deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 18.41px;
+height: 14.11px;
+left: 906px;
+top: 623px;
+
+background: #D9D9D9;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Rectangle 54 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 112px;
+left: 861px;
+top: 709px;
+
+background: #FFFFFF;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Коммуникация без стресса */
+
+position: absolute;
+width: 518px;
+height: 81px;
+left: 1002px;
+top: 726px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Union */
+
+position: absolute;
+width: 28px;
+height: 18.41px;
+left: 906px;
+top: 755px;
+
+background: #000000;
+opacity: 0.6;
+transform: rotate(-90deg);
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 18.41px;
+height: 13.9px;
+left: 906px;
+top: 769.1px;
+
+background: #D9D9D9;
+transform: rotate(-180deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 18.41px;
+height: 14.11px;
+left: 906px;
+top: 755px;
+
+background: #D9D9D9;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Rectangle 55 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 959px;
+height: 112px;
+left: 861px;
+top: 840px;
+
+background: #FFFFFF;
+border: 2px solid #000000;
+border-radius: 30px;
+
+
+/* Финансовая грамотнотность */
+
+position: absolute;
+width: 518px;
+height: 81px;
+left: 1002px;
+top: 857px;
+
+font-family: 'Work Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 30px;
+line-height: 35px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+opacity: 0.6;
+
+
+/* Union */
+
+position: absolute;
+width: 28px;
+height: 18.41px;
+left: 906px;
+top: 886px;
+
+background: #000000;
+opacity: 0.6;
+transform: rotate(-90deg);
+
+
+/* Vector 1 */
+
+position: absolute;
+width: 18.41px;
+height: 13.9px;
+left: 906px;
+top: 900.1px;
+
+background: #D9D9D9;
+transform: rotate(-180deg);
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 18.41px;
+height: 14.11px;
+left: 906px;
+top: 886px;
+
+background: #D9D9D9;
+transform: matrix(-1, 0, 0, 1, 0, 0);

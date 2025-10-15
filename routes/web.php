@@ -33,11 +33,30 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tracks/{track}/unshare', [TracksController::class, 'unshare'])->name('tracks.unshare');
     Route::delete('/tracks/{track}', [TracksController::class, 'destroy'])->name('tracks.destroy'); // Новый маршрут для удаления
 
+
+    // !!! ДОБАВЛЕНЫ МАРШРУТЫ ДЛЯ РУКОПИСНЫХ ЗАМЕТОК (Canvas) !!!
+
+    // 1. Создание формы
+    Route::get('/tracks/{track}/notes/create/handwriting', [NotesController::class, 'createHandwriting'])->name('notes.create.handwriting');
+
+    // 2. Сохранение
+    Route::post('/tracks/{track}/notes/store/handwriting', [NotesController::class, 'storeHandwriting'])->name('notes.store.handwriting');
+
+    // 3. Редактирование формы
+    Route::get('/tracks/{track}/notes/{note}/edit/handwriting', [NotesController::class, 'editHandwriting'])->name('notes.edit.handwriting');
+
+    // 4. Обновление
+    Route::patch('/tracks/{track}/notes/{note}/update/handwriting', [NotesController::class, 'updateHandwriting'])->name('notes.update.handwriting');
+
+    // Маршруты для текстовых заметок (Quill)
     Route::get('/tracks/{track}/notes/create', [NotesController::class, 'create'])->name('notes.create');
     Route::post('/tracks/{track}/notes', [NotesController::class, 'store'])->name('notes.store');
     Route::get('/tracks/{track}/notes/{note}/edit', [NotesController::class, 'edit'])->name('notes.edit');
-    Route::put('/tracks/{track}/notes/{note}', [NotesController::class, 'update'])->name('notes.update');
+    Route::patch('/tracks/{track}/notes/{note}', [NotesController::class, 'update'])->name('notes.update');
     Route::delete('/tracks/{track}/notes/{note}', [NotesController::class, 'destroy'])->name('notes.destroy');
+
+
+
 
     // Маршруты для упражнений, вложенные в треки
     Route::get('/tracks/{track}/exercises', [ExercisesController::class, 'index'])->name('exercises.index');

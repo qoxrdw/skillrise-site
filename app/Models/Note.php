@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 class Note extends Model
 {
-    protected $fillable = ['content', 'track_id'];
+    protected $fillable = ['content', 'track_id', 'type'];
 
     public function track()
     {

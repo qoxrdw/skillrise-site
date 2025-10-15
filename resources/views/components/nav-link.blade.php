@@ -8,5 +8,4 @@ $classes = ($active ?? false)
 
 <a {{ $attributes->merge(['class' => $classes]) }}>
     {{ $slot }}
-    <span class="float-right">›</span>
 </a>

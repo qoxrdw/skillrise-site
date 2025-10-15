@@ -16,7 +16,23 @@ class TracksController extends Controller
                 $like = '%' . str_replace(['%', '_'], ['\\%', '\\_'], $searchQuery) . '%';
                 $query->where('name', 'like', $like);
             })
-            ->get();
+            // !!! ДОБАВЛЕНИЕ EAGER LOADING И ОБЪЕДИНЕНИЯ !!!
+            ->with(['notes', 'exercises']) // Подгружаем связанные данные
+            ->get()
+            ->map(function ($track) {
+                // Объединяем заметки и упражнения
+                $items = $track->notes
+                    ->map(fn($item) => ['type' => 'note', 'data' => $item])
+                    ->merge(
+                        $track->exercises->map(fn($item) => ['type' => 'exercise', 'data' => $item])
+                    )
+                    ->sortBy(fn($item) => $item['data']->created_at)
+                    ->values();
+
+                $track->track_items = $items;
+                return $track;
+            });
+        // !!! КОНЕЦ ДОБАВЛЕНИЯ !!!
 
         return view('tracks.index', compact('tracks'));
     }
