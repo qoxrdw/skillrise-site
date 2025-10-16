@@ -6,21 +6,20 @@ document.addEventListener('DOMContentLoaded', function () {
         modules: {
             toolbar: [
                 [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['bold', 'italic', 'underline', 'strike'],
                 ['blockquote', 'code-block'],
 
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-                [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
 
-
-                [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                [{ 'color': [] }, { 'background': [] }],
                 [{ 'font': [] }],
                 [{ 'align': [] }],
 
                 ['link'],
 
-                ['clean']                                         // remove formatting button
+                ['clean']
             ]
         }
     });
@@ -33,12 +32,32 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     form.addEventListener('submit', function(event) {
+        // !!! 1. ПРЕДОТВРАЩАЕМ СТАНДАРТНУЮ ОТПРАВКУ, ЧТОБЫ ЗАПОЛНИТЬ СКРЫТОЕ ПОЛЕ !!!
+        event.preventDefault();
+
         console.log('Submit event triggered');
         const contentInput = document.querySelector('#content');
         if (!contentInput) {
             console.error('Content input not found');
-            event.preventDefault();
             return;
         }
+
+        // !!! 2. ГЛАВНОЕ ИСПРАВЛЕНИЕ: ПОЛУЧЕНИЕ И УСТАНОВКА КОНТЕНТА !!!
+        // Получаем HTML-контент из Quill.root.innerHTML
+        const htmlContent = quill.root.innerHTML.trim();
+
+        // Устанавливаем контент в скрытое поле
+        contentInput.value = htmlContent;
+
+        // Логика для случая, если пользователь ввел пустой контент (только <p><br></p>)
+        if (htmlContent === '' || htmlContent === '<p><br></p>') {
+            // Если пусто, устанавливаем минимальное значение, чтобы пройти валидацию 'required'
+            contentInput.value = '<p>Пустая заметка</p>';
+        }
+
+        console.log('Content input set:', contentInput.value.substring(0, 50) + '...');
+
+        // !!! 3. ОТПРАВЛЯЕМ ФОРМУ ВРУЧНУЮ !!!
+        this.submit();
     });
 });

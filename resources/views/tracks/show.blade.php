@@ -17,7 +17,7 @@
             {{-- Hero header --}}
             <div class="mb-8 md:mb-10">
                 {{-- Обводка стала мягче: border-2 border-gray-300 --}}
-                <div class="relative overflow-hidden rounded-[20px] border-2 border-gray-300 bg-gradient-to-br from-white via-gray-50 to-gray-100">
+                <div class="relative rounded-[20px] border-2 border-gray-300 bg-gradient-to-br from-white via-gray-50 to-gray-100">
                     <div class="px-6 md:px-10 py-6 md:py-8">
                         <div class="flex flex-col md:flex-row md:items-center md:gap-6">
                             <div class="flex-1 min-w-0">
@@ -86,10 +86,14 @@
                                     <div id="create-note-menu" class="absolute right-0 mt-2 w-56 rounded-[14px] border-2 border-black bg-white shadow-xl z-10 hidden origin-top-right">
                                         <div class="p-1">
                                             <a href="{{ route('notes.create', $track) }}" class="flex items-center p-3 text-sm text-black/80 rounded-[10px] hover:bg-gray-100 transition">
-                                                {{ __('Текстовая заметка (Quill)') }}
+                                                {{ __('Текстовая заметка') }}
                                             </a>
                                             <a href="{{ route('notes.create.handwriting', $track) }}" class="flex items-center p-3 text-sm text-black/80 rounded-[10px] hover:bg-gray-100 transition">
-                                                {{ __('Рукописная заметка (Canvas)') }}
+                                                <span class="mr-2">{{ __('Рукописная заметка') }}</span>
+                                                {{-- Добавляем метку "BETA" или "PROTOTYPE" --}}
+                                                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 border border-red-300 uppercase leading-none tracking-wider">
+        {{ __('BETA') }}
+    </span>
                                             </a>
                                         </div>
                                     </div>

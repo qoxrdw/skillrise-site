@@ -6,31 +6,34 @@ document.addEventListener('DOMContentLoaded', function () {
         modules: {
             toolbar: [
                 [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['bold', 'italic', 'underline', 'strike'],
                 ['blockquote', 'code-block'],
 
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-                [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
 
-
-                [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                [{ 'color': [] }, { 'background': [] }],
                 [{ 'font': [] }],
                 [{ 'align': [] }],
 
                 ['link'],
 
-                ['clean']                                         // remove formatting button
+                ['clean']
             ]
         }
     });
     console.log('Quill initialized');
 
-    // Заполняем редактор существующим содержимым
-    const initialContent = document.querySelector('#content').value;
+    // ⚠️ ВНИМАНИЕ: Заполнение редактора Quill HTML-контентом через innerHTML не всегда безопасно.
+    // Лучше использовать quill.clipboard.dangerouslyPasteHTML.
+    const contentInput = document.querySelector('#content');
+    const initialContent = contentInput ? contentInput.value : '';
+
     if (initialContent) {
-        quill.root.innerHTML = initialContent;
-        console.log('Initial content set:', initialContent);
+        // Используем безопасный метод для вставки HTML в Quill
+        quill.clipboard.dangerouslyPasteHTML(initialContent);
+        console.log('Initial content set.');
     }
 
     const form = document.getElementById('note-form');
@@ -41,16 +44,30 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Note form found');
 
     form.addEventListener('submit', function(event) {
+        // !!! ГЛАВНОЕ ИСПРАВЛЕНИЕ 1: ОТМЕНЯЕМ СТАНДАРТНУЮ ОТПРАВКУ !!!
+        event.preventDefault();
+
         console.log('Submit event triggered');
         const contentInput = document.querySelector('#content');
         if (!contentInput) {
             console.error('Content input not found');
-            event.preventDefault();
             return;
         }
-        const content = quill.root.innerHTML;
-        console.log('Quill content:', content);
-        contentInput.value = content;
-        console.log('Content set to:', contentInput.value);
+
+        const htmlContent = quill.root.innerHTML.trim();
+        console.log('Quill content:', htmlContent.substring(0, 50) + '...');
+
+        // Устанавливаем контент в скрытое поле
+        contentInput.value = htmlContent;
+
+        // Логика для случая, если пользователь ввел пустой контент (только <p><br></p>)
+        if (htmlContent === '' || htmlContent === '<p><br></p>') {
+            contentInput.value = '<p>Пустая заметка</p>';
+        }
+
+        console.log('Content set to:', contentInput.value.substring(0, 50) + '...');
+
+        // !!! ГЛАВНОЕ ИСПРАВЛЕНИЕ 2: ОТПРАВЛЯЕМ ФОРМУ ВРУЧНУЮ !!!
+        this.submit();
     });
 });

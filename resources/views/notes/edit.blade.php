@@ -42,7 +42,7 @@
             <div class="bg-white"> {{-- Этот div уже имеет bg-white --}}
                 <form id="note-form" method="POST" action="{{ route('notes.update', [$track, $note]) }}">
                     @csrf
-                    @method('PUT') {{-- Метод для обновления --}}
+                    @method('PATCH') {{-- Метод для обновления --}}
                     <div class="p-6 sm:p-8">
                         {{-- Контейнер редактора Quill --}}
                         {{-- Убраны классы рамки и фокуса из родительского div --}}
