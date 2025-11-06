@@ -87,4 +87,58 @@
     {{-- Пользовательский скрипт для инициализации Quill и обработки отправки формы --}}
     {{-- Убедитесь, что этот скрипт правильно инициализирует Quill и заполняет скрытое поле 'content' перед отправкой формы --}}
     @vite('resources/js/notes-create.js')
+    <style>
+        /* Убираем рамку Quill редактора и контейнера */
+        .ql-toolbar.ql-snow,
+        .ql-container.ql-snow {
+            border: none !important;
+        }
+
+        /* Убираем нижнюю границу у тулбара или делаем ее тонкой */
+        .ql-toolbar.ql-snow {
+            border-bottom: 1px solid #e5e7eb !important; /* Оставляем тонкую линию для разделения тулбара */
+        }
+
+        /* Настройка стилей для области редактирования */
+        .ql-editor {
+            /* padding: top right bottom left */
+            /* Увеличен отступ сверху и скорректированы боковые отступы */
+            padding: 100px 48px 24px 48px !important;
+            font-size: 1.125rem !important; /* Увеличиваем размер текста */
+            line-height: 1.75rem !important; /* Увеличиваем межстрочный интервал */
+            min-height: calc(70vh - 124px); /* Минимальная высота с учетом верхнего и нижнего padding */
+        }
+
+        /* Выравнивание плейсхолдера по вертикали */
+        .ql-editor::before {
+            top: 100px !important; /* Устанавливаем верхний отступ, равный padding-top .ql-editor */
+            left: 48px !important; /* Устанавливаем левый отступ, равный padding-left .ql-editor */
+        }
+
+
+        /* Дополнительные стили для заголовков в редакторе, если используются */
+        .ql-editor h1 {
+            font-size: 2.25rem !important; /* Пример: text-4xl */
+            font-weight: bold !important;
+            margin-bottom: 1.5rem !important; /* Пример: mb-6 */
+        }
+
+        .ql-editor h2 {
+            font-size: 1.875rem !important; /* Пример: text-3xl */
+            font-weight: bold !important;
+            margin-bottom: 1.25rem !important; /* Пример: mb-5 */
+        }
+        /* ... добавьте стили для других элементов, если нужно (h3, h4, списки и т.д.) */
+
+        /* Существующие стили... */
+
+        /* НОВОЕ: Установка шрифта по умолчанию */
+        .ql-editor {
+            font-family: 'Work Sans', sans-serif !important;
+        }
+
+        .ql-editor p {
+            font-family: 'Work Sans', sans-serif !important;
+        }
+    </style>
 @endsection

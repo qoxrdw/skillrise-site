@@ -1,5 +1,28 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log('Notes edit script loaded');
+
+    // 1. ИМПОРТ И НАСТРОЙКА ШРИФТОВ QUILL
+    const Font = Quill.import('formats/font');
+
+    // Список шрифтов
+    const FONT_WHITELIST = [
+        'sans-serif',    // Work Sans (по умолчанию)
+        'serif',         // Times New Roman
+        'monospace',     // Monospace
+        'roboto',        // Roboto
+        'playfair',      // Playfair Display
+        'opensans',      // Open Sans
+        'lato',          // Lato
+        'montserrat',    // Montserrat
+        'poppins',       // Poppins
+        'raleway'        // Raleway
+    ];
+
+    Font.whitelist = FONT_WHITELIST;
+    Font.default = 'sans-serif';
+    Quill.register(Font, true);
+
+    // 2. Инициализация Quill
     const quill = new Quill('#editor', {
         theme: 'snow',
         placeholder: 'Введите текст заметки...',
@@ -14,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 [{ 'indent': '-1'}, { 'indent': '+1' }],
 
                 [{ 'color': [] }, { 'background': [] }],
-                [{ 'font': [] }],
+                [{ 'font': FONT_WHITELIST }],
                 [{ 'align': [] }],
 
                 ['link'],
@@ -23,51 +46,70 @@ document.addEventListener('DOMContentLoaded', function () {
             ]
         }
     });
-    console.log('Quill initialized');
+    console.log('Quill initialized for editing');
 
-    // ⚠️ ВНИМАНИЕ: Заполнение редактора Quill HTML-контентом через innerHTML не всегда безопасно.
-    // Лучше использовать quill.clipboard.dangerouslyPasteHTML.
+    // 2.1 Загрузка существующего контента
     const contentInput = document.querySelector('#content');
-    const initialContent = contentInput ? contentInput.value : '';
-
-    if (initialContent) {
-        // Используем безопасный метод для вставки HTML в Quill
-        quill.clipboard.dangerouslyPasteHTML(initialContent);
-        console.log('Initial content set.');
+    if (contentInput && contentInput.value) {
+        try {
+            quill.root.innerHTML = contentInput.value;
+            console.log('Existing content loaded');
+        } catch (e) {
+            console.error('Error loading content:', e);
+        }
     }
 
+    // 2.2 ИСПРАВЛЕНИЕ: Сохранение форматирования при нажатии Enter
+    // Удаляем стандартный биндинг Enter
+    delete quill.keyboard.bindings['Enter'];
+
+    // Добавляем свой биндинг с сохранением форматирования
+    quill.keyboard.addBinding({
+        key: 'Enter',
+        handler: function(range, context) {
+            // Сохраняем текущее форматирование символа (не строки!)
+            const currentFormat = quill.getFormat(range.index);
+
+            // Вставляем новую строку стандартным способом
+            this.quill.insertText(range.index, '\n');
+
+            // Устанавливаем курсор на новую строку
+            this.quill.setSelection(range.index + 1);
+
+            // Применяем форматирование к тексту после курсора
+            if (currentFormat.font) {
+                // Небольшая задержка для применения форматирования
+                setTimeout(() => {
+                    const sel = this.quill.getSelection();
+                    if (sel) {
+                        this.quill.format('font', currentFormat.font);
+                    }
+                }, 0);
+            }
+
+            return false;
+        }
+    });
+
+    // 3. Логика отправки формы
     const form = document.getElementById('note-form');
     if (!form) {
         console.error('Note form not found');
         return;
     }
-    console.log('Note form found');
 
     form.addEventListener('submit', function(event) {
-        // !!! ГЛАВНОЕ ИСПРАВЛЕНИЕ 1: ОТМЕНЯЕМ СТАНДАРТНУЮ ОТПРАВКУ !!!
         event.preventDefault();
-
         console.log('Submit event triggered');
-        const contentInput = document.querySelector('#content');
-        if (!contentInput) {
-            console.error('Content input not found');
-            return;
-        }
 
         const htmlContent = quill.root.innerHTML.trim();
-        console.log('Quill content:', htmlContent.substring(0, 50) + '...');
-
-        // Устанавливаем контент в скрытое поле
         contentInput.value = htmlContent;
 
-        // Логика для случая, если пользователь ввел пустой контент (только <p><br></p>)
         if (htmlContent === '' || htmlContent === '<p><br></p>') {
             contentInput.value = '<p>Пустая заметка</p>';
         }
 
-        console.log('Content set to:', contentInput.value.substring(0, 50) + '...');
-
-        // !!! ГЛАВНОЕ ИСПРАВЛЕНИЕ 2: ОТПРАВЛЯЕМ ФОРМУ ВРУЧНУЮ !!!
+        console.log('Content updated, submitting form');
         this.submit();
     });
 });

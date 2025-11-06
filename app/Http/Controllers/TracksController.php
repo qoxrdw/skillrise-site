@@ -16,23 +16,36 @@ class TracksController extends Controller
                 $like = '%' . str_replace(['%', '_'], ['\\%', '\\_'], $searchQuery) . '%';
                 $query->where('name', 'like', $like);
             })
-            // !!! ДОБАВЛЕНИЕ EAGER LOADING И ОБЪЕДИНЕНИЯ !!!
+            // !!! ИСПРАВЛЕННОЕ EAGER LOADING И ОБЪЕДИНЕНИЕ !!!
             ->with(['notes', 'exercises']) // Подгружаем связанные данные
             ->get()
-            ->map(function ($track) {
-                // Объединяем заметки и упражнения
-                $items = $track->notes
-                    ->map(fn($item) => ['type' => 'note', 'data' => $item])
-                    ->merge(
-                        $track->exercises->map(fn($item) => ['type' => 'exercise', 'data' => $item])
-                    )
-                    ->sortBy(fn($item) => $item['data']->created_at)
+            ->each(function ($track) {
+                // Безопасное получение коллекций (защита от null)
+                $notes = $track->notes ?? collect();
+                $exercises = $track->exercises ?? collect();
+
+                // Преобразуем заметки
+                $noteItems = $notes->map(function($item) {
+                    return ['type' => 'note', 'data' => $item];
+                });
+
+                // Преобразуем упражнения
+                $exerciseItems = $exercises->map(function($item) {
+                    return ['type' => 'exercise', 'data' => $item];
+                });
+
+                // Объединяем и сортируем
+                $items = $noteItems
+                    ->concat($exerciseItems)
+                    ->sortBy(function($item) {
+                        return $item['data']->created_at;
+                    })
                     ->values();
 
-                $track->track_items = $items;
-                return $track;
+                // Используем setAttribute вместо прямого присвоения
+                $track->setAttribute('track_items', $items);
             });
-        // !!! КОНЕЦ ДОБАВЛЕНИЯ !!!
+        // !!! КОНЕЦ ИСПРАВЛЕНИЯ !!!
 
         return view('tracks.index', compact('tracks'));
     }

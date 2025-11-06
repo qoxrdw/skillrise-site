@@ -7,17 +7,25 @@
     <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com {{ config('app.env') == 'local' ? 'http://localhost:3000' : '' }} 'unsafe-eval' 'unsafe-inline';
-    style-src 'self' https://cdn.jsdelivr.net https://fonts.bunny.net 'unsafe-inline';
-    font-src 'self' https://fonts.bunny.net;
+
+    {{-- ⚠️ КРИТИЧНО: ДОБАВЛЕНЫ ДОМЕНЫ GOOGLE FONTS --}}
+    style-src 'self' https://cdn.jsdelivr.net https://fonts.bunny.net https://fonts.googleapis.com 'unsafe-inline';
+    font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com;
+
     connect-src 'self' {{ config('app.env') == 'local' ? 'ws://localhost:3000' : '' }};
 ">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'SkillRise') }}</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=work-sans:400,500,600&display=swap" rel="stylesheet" />
 
+    <!-- Замените существующую ссылку на Google Fonts в <head> на эту -->
+
+    <!-- ПОДКЛЮЧЕНИЕ ВСЕХ ШРИФТОВ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

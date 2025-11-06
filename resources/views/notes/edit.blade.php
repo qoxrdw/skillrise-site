@@ -141,5 +141,16 @@
             margin-bottom: 1.25rem !important; /* Пример: mb-5 */
         }
         /* ... добавьте стили для других элементов, если нужно (h3, h4, списки и т.д.) */
+
+        /* Существующие стили... */
+
+        /* НОВОЕ: Установка шрифта по умолчанию */
+        .ql-editor {
+            font-family: 'Work Sans', sans-serif !important;
+        }
+
+        .ql-editor p {
+            font-family: 'Work Sans', sans-serif !important;
+        }
     </style>
 @endsection
