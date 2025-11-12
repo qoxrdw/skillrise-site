@@ -20,11 +20,13 @@
             <form id="handwriting-form" method="POST" action="{{ route('notes.store.handwriting', $track) }}" class="flex-1 flex flex-col">
                 @csrf
 
+                {{-- Скрытые поля для отправки данных на сервер --}}
                 <input type="hidden" name="content_json" id="content_json">
                 <input type="hidden" name="content_base64" id="content_base64">
 
                 {{-- Панель инструментов --}}
-                <div id="toolbar" class="flex items-center gap-2 p-3 bg-white border-b border-gray-200">
+                {{-- Добавлен flex-wrap для адаптивности на узких экранах --}}
+                <div id="toolbar" class="flex items-center gap-2 p-3 bg-white border-b border-gray-200 flex-wrap">
                     {{-- Инструменты рисования --}}
                     <div class="flex items-center gap-2 border-r border-gray-300 pr-3">
                         <button type="button" data-tool="pen" class="tool-button h-10 w-10 rounded-lg border-2 border-black bg-black text-white hover:opacity-90 transition flex items-center justify-center text-lg" title="Перо">
@@ -46,22 +48,22 @@
 
                     {{-- Выбор цвета --}}
                     <div class="flex items-center gap-2 border-r border-gray-300 pr-3">
-                        <label class="text-sm text-gray-600 font-medium">Цвет:</label>
+                        <label class="text-sm text-gray-600 font-medium hidden sm:inline">Цвет:</label>
                         <input type="color" id="color-picker" value="#000000" class="h-10 w-12 rounded-lg border-2 border-gray-300 cursor-pointer">
 
                         {{-- Быстрые цвета --}}
-                        <button type="button" data-color="#000000" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-black hover:scale-110 transition"></button>
-                        <button type="button" data-color="#EF4444" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-red-500 hover:scale-110 transition"></button>
-                        <button type="button" data-color="#3B82F6" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-blue-500 hover:scale-110 transition"></button>
-                        <button type="button" data-color="#10B981" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-green-500 hover:scale-110 transition"></button>
-                        <button type="button" data-color="#F59E0B" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-amber-500 hover:scale-110 transition"></button>
-                        <button type="button" data-color="#8B5CF6" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-purple-500 hover:scale-110 transition"></button>
+                        <button type="button" data-color="#000000" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-black hover:scale-110 transition" title="Черный"></button>
+                        <button type="button" data-color="#EF4444" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-red-500 hover:scale-110 transition" title="Красный"></button>
+                        <button type="button" data-color="#3B82F6" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-blue-500 hover:scale-110 transition" title="Синий"></button>
+                        <button type="button" data-color="#10B981" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-green-500 hover:scale-110 transition" title="Зеленый"></button>
+                        <button type="button" data-color="#F59E0B" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-amber-500 hover:scale-110 transition" title="Оранжевый"></button>
+                        <button type="button" data-color="#8B5CF6" class="quick-color h-8 w-8 rounded-md border-2 border-gray-300 bg-purple-500 hover:scale-110 transition" title="Фиолетовый"></button>
                     </div>
 
                     {{-- Размер пера --}}
                     <div class="flex items-center gap-2 border-r border-gray-300 pr-3">
-                        <label class="text-sm text-gray-600 font-medium">Размер:</label>
-                        <input type="range" id="brush-size" min="1" max="50" value="5" class="w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <label class="text-sm text-gray-600 font-medium hidden sm:inline">Размер:</label>
+                        <input type="range" id="brush-size" min="1" max="50" value="5" class="w-24 sm:w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
                         <span id="brush-size-display" class="text-sm font-medium text-gray-700 w-8">5</span>
                     </div>
 
@@ -83,7 +85,8 @@
                 </div>
 
                 {{-- Холст для рисования --}}
-                <div class="flex-1 overflow-hidden bg-white">
+                {{-- !!! ИЗМЕНЕНИЕ 1: Добавлен ID и класс overflow-y-auto для прокрутки контейнера !!! --}}
+                <div id="canvas-scroll-container" class="flex-1 overflow-y-auto bg-white">
                     <canvas id="handwriting-canvas" class="w-full h-full"></canvas>
                 </div>
 
@@ -93,11 +96,13 @@
 @endsection
 
 @section('scripts')
+    {{-- Fabric.js --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof fabric !== 'undefined') {
+                // Небольшая задержка для корректного расчета размеров контейнера после полной загрузки DOM
                 setTimeout(initCanvas, 100);
             } else {
                 console.error('Fabric.js не загружен.');
@@ -106,96 +111,50 @@
 
         function initCanvas() {
             const canvasElement = document.getElementById('handwriting-canvas');
-            if (!canvasElement || typeof fabric === 'undefined') {
-                console.error('Canvas элемент или библиотека Fabric.js не найдены.');
+            // !!! ИЗМЕНЕНИЕ 2: ИСПОЛЬЗУЕМ НОВЫЙ КОНТЕЙНЕР ДЛЯ ПРОКРУТКИ !!!
+            const scrollContainer = document.getElementById('canvas-scroll-container');
+
+            if (!canvasElement || !scrollContainer || typeof fabric === 'undefined') {
+                console.error('Canvas элемент, контейнер прокрутки или библиотека Fabric.js не найдены.');
                 return;
             }
 
-            const container = canvasElement.parentElement;
-            const containerRect = container.getBoundingClientRect();
-            const containerWidth = containerRect.width;
-            const containerHeight = containerRect.height;
+            // 1. Корректный расчет размеров
+            const containerWidth = scrollContainer.clientWidth;
+            const containerHeight = scrollContainer.clientHeight;
+
+            // Установим минимальную высоту для холста, чтобы было что скроллить
+            const minCanvasHeight = 1500;
+            const finalHeight = Math.max(containerHeight, minCanvasHeight);
 
             canvasElement.width = containerWidth;
-            canvasElement.height = containerHeight;
+            canvasElement.height = finalHeight;
 
             const canvas = new fabric.Canvas('handwriting-canvas', {
                 isDrawingMode: true,
                 selection: false,
                 skipTargetFind: true,
                 width: containerWidth,
-                height: containerHeight,
+                height: finalHeight, // Используем finalHeight
                 backgroundColor: '#FFFFFF'
             });
 
-            canvas.calcOffset();
-            canvas.renderAll();
+            // !!! ИЗМЕНЕНИЕ 3: ИСПРАВЛЕНИЕ ПРОКРУТКИ КОЛЕСОМ МЫШИ !!!
+            canvas.wrapperEl.addEventListener('wheel', (e) => {
+                // Останавливаем распространение события, чтобы оно не было обработано Fabric.js,
+                // но позволяем ему всплыть до родительского скроллящегося контейнера.
+                e.stopPropagation();
+            });
 
-            // Настройки кисти
+
+            // Глобальные переменные для состояния
             let currentTool = 'pen';
             let currentColor = '#000000';
             let brushSize = 5;
 
-            // Настройка разных типов кистей
-            const setPenMode = () => {
-                canvas.isDrawingMode = true;
-                canvas.off('mouse:down');
-                canvas.skipTargetFind = true;
-                canvas.selection = false;
+            // --- Инструменты Fabric.js ---
 
-                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-                canvas.freeDrawingBrush.width = brushSize;
-                canvas.freeDrawingBrush.color = currentColor;
-                canvas.freeDrawingBrush.strokeLineCap = 'round';
-                canvas.freeDrawingBrush.strokeLineJoin = 'round';
-            };
-
-            const setMarkerMode = () => {
-                canvas.isDrawingMode = true;
-                canvas.off('mouse:down');
-                canvas.skipTargetFind = true;
-                canvas.selection = false;
-
-                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-                canvas.freeDrawingBrush.width = brushSize * 1.5;
-                canvas.freeDrawingBrush.color = currentColor;
-                canvas.freeDrawingBrush.strokeLineCap = 'square';
-                canvas.freeDrawingBrush.strokeLineJoin = 'miter';
-            };
-
-            const setPencilMode = () => {
-                canvas.isDrawingMode = true;
-                canvas.off('mouse:down');
-                canvas.skipTargetFind = true;
-                canvas.selection = false;
-
-                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-                canvas.freeDrawingBrush.width = brushSize * 0.7;
-                canvas.freeDrawingBrush.color = currentColor;
-                canvas.freeDrawingBrush.strokeLineCap = 'round';
-                canvas.freeDrawingBrush.strokeLineJoin = 'round';
-                // Добавляем легкую прозрачность для эффекта карандаша
-                const hexToRgba = (hex, alpha = 0.8) => {
-                    const r = parseInt(hex.slice(1, 3), 16);
-                    const g = parseInt(hex.slice(3, 5), 16);
-                    const b = parseInt(hex.slice(5, 7), 16);
-                    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-                };
-                canvas.freeDrawingBrush.color = hexToRgba(currentColor, 0.8);
-            };
-
-            const setHighlighterMode = () => {
-                canvas.isDrawingMode = true;
-                canvas.off('mouse:down');
-                canvas.skipTargetFind = true;
-                canvas.selection = false;
-
-                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-                canvas.freeDrawingBrush.width = brushSize * 3;
-                canvas.freeDrawingBrush.color = currentColor + '33';
-                canvas.freeDrawingBrush.strokeLineCap = 'square';
-            };
-
+            // Обработчик ластика (удаляет объект по клику/тапу)
             const eraserHandler = function(options) {
                 if (options.target) {
                     canvas.remove(options.target);
@@ -203,15 +162,87 @@
                 }
             };
 
-            const setEraserMode = () => {
-                canvas.isDrawingMode = false;
-                canvas.skipTargetFind = false;
-                canvas.selection = false;
-                canvas.off('mouse:down', eraserHandler);
-                canvas.on('mouse:down', eraserHandler);
+            // Хелпер для конвертации HEX в RGBA
+            const hexToRgba = (hex, alpha) => {
+                const r = parseInt(hex.slice(1, 3), 16);
+                const g = parseInt(hex.slice(3, 5), 16);
+                const b = parseInt(hex.slice(5, 7), 16);
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
             };
 
-            // Панель инструментов
+            /**
+             * Устанавливает режим рисования и применяет настройки кисти.
+             * @param {object} config - Конфигурация кисти.
+             * @param {number} [config.sizeMultiplier=1] - Множитель для базового размера.
+             * @param {string} [config.cap='round'] - Стиль концов линии.
+             * @param {string} [config.join='round'] - Стиль соединения линий.
+             * @param {number|null} [config.alpha=null] - Значение прозрачности (0.0 - 1.0) для RGBA.
+             * @param {boolean} [config.isHighlighter=false] - Флаг, указывающий, что это маркер-выделитель.
+             */
+            const setDrawingMode = (config = {}) => {
+                const {
+                    sizeMultiplier = 1,
+                    cap = 'round',
+                    join = 'round',
+                    alpha = null,
+                    isHighlighter = false
+                } = config;
+
+                canvas.isDrawingMode = true;
+                // Явно отключаем ластик, если он был активен
+                canvas.off('mouse:down', eraserHandler);
+                canvas.skipTargetFind = true;
+                canvas.selection = false;
+
+                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+
+                let finalColor = currentColor;
+                let finalSize = brushSize * sizeMultiplier;
+
+                if (isHighlighter) {
+                    // Для выделителя добавляем 20% непрозрачности (Hex '33')
+                    finalColor = currentColor + '33';
+                    canvas.freeDrawingBrush.strokeLineCap = 'square';
+                } else if (alpha !== null) {
+                    // Для карандаша (альфа 0.8)
+                    finalColor = hexToRgba(currentColor, alpha);
+                    canvas.freeDrawingBrush.strokeLineCap = cap;
+                    canvas.freeDrawingBrush.strokeLineJoin = join;
+                } else {
+                    // Для пера/маркера
+                    canvas.freeDrawingBrush.strokeLineCap = cap;
+                    canvas.freeDrawingBrush.strokeLineJoin = join;
+                }
+
+                canvas.freeDrawingBrush.width = finalSize;
+                canvas.freeDrawingBrush.color = finalColor;
+            };
+
+            // Настройка разных типов кистей (используют хелпер setDrawingMode)
+            const toolSetters = {
+                'pen': () => setDrawingMode({ sizeMultiplier: 1, cap: 'round', join: 'round' }),
+                'marker': () => setDrawingMode({ sizeMultiplier: 1.5, cap: 'square', join: 'miter' }),
+                'pencil': () => setDrawingMode({ sizeMultiplier: 0.7, alpha: 0.8 }),
+                'highlighter': () => setDrawingMode({ sizeMultiplier: 3, isHighlighter: true }),
+                'eraser': () => {
+                    canvas.isDrawingMode = false;
+                    canvas.off('mouse:down', eraserHandler); // Удаляем предыдущий, если был
+                    canvas.on('mouse:down', eraserHandler); // Регистрируем новый
+                    canvas.skipTargetFind = false; // Для поиска объекта под курсором
+                    canvas.selection = false;
+                }
+            };
+
+            const setActiveTool = (toolName) => {
+                const setter = toolSetters[toolName];
+                if (setter) {
+                    currentTool = toolName;
+                    setter();
+                }
+            };
+
+            // --- Обработчики UI ---
+
             const toolButtons = document.querySelectorAll('.tool-button');
             const colorPicker = document.getElementById('color-picker');
             const quickColorButtons = document.querySelectorAll('.quick-color');
@@ -225,47 +256,43 @@
             // Обработчики инструментов
             toolButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
+                    // Сброс стилей всех кнопок
                     toolButtons.forEach(b => {
                         b.classList.remove('bg-black', 'text-white', 'border-black');
                         b.classList.add('bg-white', 'text-black/80', 'border-gray-300');
                     });
 
-                    currentTool = btn.dataset.tool;
+                    // Установка стилей активной кнопки
                     btn.classList.add('bg-black', 'text-white', 'border-black');
                     btn.classList.remove('bg-white', 'text-black/80', 'border-gray-300');
 
-                    switch(currentTool) {
-                        case 'pen': setPenMode(); break;
-                        case 'marker': setMarkerMode(); break;
-                        case 'pencil': setPencilMode(); break;
-                        case 'highlighter': setHighlighterMode(); break;
-                        case 'eraser': setEraserMode(); break;
-                    }
+                    // Активация инструмента
+                    setActiveTool(btn.dataset.tool);
                 });
             });
 
-            // Инициализация начального состояния
+            // Инициализация начального состояния (активируем "Перо")
             const penButton = document.querySelector('[data-tool="pen"]');
             if (penButton) penButton.click();
 
             // Обработчик цвета
+            const handleColorChange = (color) => {
+                currentColor = color;
+                // Применяем настройки, только если активен инструмент рисования
+                if (currentTool !== 'eraser') {
+                    setActiveTool(currentTool);
+                }
+            };
+
             colorPicker.addEventListener('input', (e) => {
-                currentColor = e.target.value;
-                if (currentTool === 'pen') setPenMode();
-                else if (currentTool === 'marker') setMarkerMode();
-                else if (currentTool === 'pencil') setPencilMode();
-                else if (currentTool === 'highlighter') setHighlighterMode();
+                handleColorChange(e.target.value);
             });
 
             // Быстрые цвета
             quickColorButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    currentColor = btn.dataset.color;
-                    colorPicker.value = currentColor;
-                    if (currentTool === 'pen') setPenMode();
-                    else if (currentTool === 'marker') setMarkerMode();
-                    else if (currentTool === 'pencil') setPencilMode();
-                    else if (currentTool === 'highlighter') setHighlighterMode();
+                    colorPicker.value = btn.dataset.color;
+                    handleColorChange(btn.dataset.color);
                 });
             });
 
@@ -273,10 +300,10 @@
             brushSizeSlider.addEventListener('input', (e) => {
                 brushSize = parseInt(e.target.value);
                 brushSizeDisplay.textContent = brushSize;
-                if (currentTool === 'pen') setPenMode();
-                else if (currentTool === 'marker') setMarkerMode();
-                else if (currentTool === 'pencil') setPencilMode();
-                else if (currentTool === 'highlighter') setHighlighterMode();
+                // Применяем настройки, только если активен инструмент рисования
+                if (currentTool !== 'eraser') {
+                    setActiveTool(currentTool);
+                }
             });
 
             // Очистка
@@ -285,31 +312,34 @@
                     canvas.clear();
                     canvas.backgroundColor = '#FFFFFF';
                     canvas.renderAll();
-                    if (currentTool === 'pen') setPenMode();
-                    else if (currentTool === 'marker') setMarkerMode();
-                    else if (currentTool === 'pencil') setPencilMode();
-                    else if (currentTool === 'highlighter') setHighlighterMode();
+                    // Переинициализация активного инструмента после очистки
+                    setActiveTool(currentTool);
                 }
             });
 
             // Сохранение
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
+
+                // 1. Сохраняем JSON-представление объектов на холсте (для загрузки и редактирования)
                 const json_data = canvas.toJSON();
                 jsonInput.value = JSON.stringify(json_data);
+
+                // 2. Сохраняем Base64-изображение (для быстрого превью в списке)
                 const base64_data = canvas.toDataURL({
                     format: 'png',
                     quality: 1.0
                 });
                 base64Input.value = base64_data;
+
                 form.submit();
             });
 
             // Ресайз
             window.addEventListener('resize', () => {
-                const newRect = container.getBoundingClientRect();
+                const newRect = scrollContainer.getBoundingClientRect(); // Используем scrollContainer
                 canvas.setWidth(newRect.width);
-                canvas.setHeight(newRect.height);
+                // Высота холста не меняется при ресайзе, чтобы сохранить прокрутку и нарисованный контент
                 canvas.calcOffset();
                 canvas.renderAll();
             });

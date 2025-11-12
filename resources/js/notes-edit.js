@@ -3,32 +3,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 1. ИМПОРТ И НАСТРОЙКА ШРИФТОВ QUILL
     const Font = Quill.import('formats/font');
-
+    const Size = Quill.import('formats/size');
     // Список шрифтов
     const FONT_WHITELIST = [
         'sans-serif',    // Work Sans (по умолчанию)
         'serif',         // Times New Roman
-        'monospace',     // Monospace
         'roboto',        // Roboto
-        'playfair',      // Playfair Display
         'opensans',      // Open Sans
-        'lato',          // Lato
         'montserrat',    // Montserrat
-        'poppins',       // Poppins
-        'raleway'        // Raleway
+        'raleway',       // Raleway
+        'georgia',       // Georgia
+        'verdana',       // Verdana
+        'spectral',      // Spectral
+        'merriweather'   // Merriweather
     ];
 
+    // Список размеров шрифтов (как в Word)
+    const SIZE_WHITELIST = [
+        '8px', '9px', '10px', '11px', '12px', '14px', '16px', '18px',
+        '20px', '22px', '24px', '26px', '28px', '36px', '48px', '72px'
+    ];
+
+    // Настройка статических свойств
     Font.whitelist = FONT_WHITELIST;
     Font.default = 'sans-serif';
-    Quill.register(Font, true);
 
-    // 2. Инициализация Quill
+    Size.whitelist = SIZE_WHITELIST;
+
+    // Регистрируем настроенные модули в Quill
+    Quill.register(Font, true);
+    Quill.register(Size, true);
+
+    // 2. Инициализация Quill с настроенным тулбаром
     const quill = new Quill('#editor', {
         theme: 'snow',
         placeholder: 'Введите текст заметки...',
         modules: {
             toolbar: [
                 [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'size': SIZE_WHITELIST }], // Добавлен выбор размера
+                [{ 'font': FONT_WHITELIST }],
                 ['bold', 'italic', 'underline', 'strike'],
                 ['blockquote', 'code-block'],
 
@@ -37,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 [{ 'indent': '-1'}, { 'indent': '+1' }],
 
                 [{ 'color': [] }, { 'background': [] }],
-                [{ 'font': FONT_WHITELIST }],
                 [{ 'align': [] }],
 
                 ['link'],
