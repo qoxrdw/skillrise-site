@@ -1,3 +1,6 @@
+<?php
+use Illuminate\Support\Facades\Storage; // Используем для генерации URL аудиофайла
+?>
 @extends('layouts.app')
 
 @section('content')
@@ -95,6 +98,13 @@
         {{ __('BETA') }}
     </span>
                                             </a>
+                                            {{-- 🎙️ НОВОЕ: Голосовая заметка --}}
+                                            <a href="{{ route('notes.create.voice', $track) }}" class="flex items-center p-3 text-sm text-black/80 rounded-[10px] hover:bg-gray-100 transition">
+                                                <span class="mr-2">{{ __('Голосовая заметка') }}</span>
+                                                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 border border-blue-300 uppercase leading-none tracking-wider">
+                                                    {{ __('NEW') }}
+                                                </span>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -127,7 +137,7 @@
                 <section>
                     <div class="flex items-center justify-between mb-3">
                         <h2 class="text-xl md:text-2xl text-black/90">{{ __('Заметки') }}</h2>
-                        {{-- Кнопка "Добавить" (ЗАМЕНЕНА на иконку плюса) --}}
+                        {{-- Кнопка "Добавить" (ЗАМЕНЕНА на иконку плюса). Теперь ведет на текстовую заметку, как базовый вариант --}}
                         <a href="{{ route('notes.create', $track) }}" class="h-9 w-9 px-0 rounded-[12px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white text-xl transition flex items-center justify-center">
                             {{-- Иконка плюса --}}
                             +
@@ -143,26 +153,44 @@
                             @foreach($notes as $note)
                                 @php
                                     // 💡 ИСПРАВЛЕНИЕ: Используем новое поле 'type' для надежного выбора маршрута
-                                    // Если заметка не имеет поля 'type', по умолчанию считаем ее текстовой ('text')
                                     $noteType = $note->type ?? 'text';
                                     $isHandwriting = $noteType === 'handwriting';
+                                    $isVoice = $noteType === 'voice';
 
-                                    // Определяем правильный маршрут редактирования
-                                    $editRoute = $isHandwriting
-                                        ? route('notes.edit.handwriting', [$track, $note])
-                                        : route('notes.edit', [$track, $note]);
+                                    // Определяем правильный маршрут редактирования. Голосовые заметки не редактируются.
+                                    $editRoute = $isVoice ? '#' : (
+                                        $isHandwriting
+                                            ? route('notes.edit.handwriting', [$track, $note])
+                                            : route('notes.edit', [$track, $note])
+                                    );
+                                    // Заголовок для карточки
+                                    $cardTitle = $isVoice ? __('Голосовая заметка') : ($note->getFirstLine() ?: __('(Без названия)'));
                                 @endphp
                                 {{-- Карточки: Рамка стала мягче --}}
                                 <li class="group rounded-[14px] border-2 border-gray-300 bg-white p-5 hover:-translate-y-0.5 transition hover:border-black">
-                                    {{-- ИСПРАВЛЕНО: Теперь заголовок использует динамический маршрут $editRoute --}}
-                                    <a href="{{ $editRoute }}" class="block text-[18px] leading-6 text-black/90 truncate">{{ $note->getFirstLine() ?: __('(Без названия)') }}</a>
+
+                                    @if ($isVoice)
+                                        {{-- 🎙️ РЕНДЕР АУДИО ПЛЕЕРА ДЛЯ ГОЛОСОВОЙ ЗАМЕТКИ --}}
+                                        <h3 class="block text-[18px] leading-6 text-black/90 truncate mb-4">{{ $cardTitle }}</h3>
+                                        {{-- Используем Storage::url() для доступа к файлу, сохраненному на диске 'public' --}}
+                                        <audio controls class="w-full h-10 bg-gray-100 rounded-[10px]">
+                                            <source src="{{ Storage::url($note->content) }}" type="audio/webm">
+                                            <source src="{{ Storage::url($note->content) }}" type="audio/mp4">
+                                            {{ __('Ваш браузер не поддерживает элемент аудио.') }}
+                                        </audio>
+                                    @else
+                                        {{-- Текст и рукописные заметки (ссылка на редактирование) --}}
+                                        <a href="{{ $editRoute }}" class="block text-[18px] leading-6 text-black/90 truncate">{{ $cardTitle }}</a>
+                                    @endif
+
                                     <div class="mt-3 flex items-center justify-between text-xs text-black/60">
                                         <span>{{ $note->created_at->isoFormat('LL') }}</span>
                                         <div class="flex items-center gap-2">
 
-                                            {{-- Кнопка "Редакт." (Вторичная, центрирование) --}}
-                                            {{-- Использует $editRoute, определенный выше --}}
-                                            <a href="{{ $editRoute }}" class="h-8 px-3 rounded-[10px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white transition flex items-center justify-center">{{ __('Редакт.') }}</a>
+                                            @if (!$isVoice)
+                                                {{-- Кнопка "Редакт." (только для текстовых и рукописных) --}}
+                                                <a href="{{ $editRoute }}" class="h-8 px-3 rounded-[10px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white transition flex items-center justify-center">{{ __('Редакт.') }}</a>
+                                            @endif
 
                                             <form action="{{ route('notes.destroy', [$track, $note]) }}" method="POST" onsubmit="return confirm('{{ __('Удалить заметку безвозвратно?') }}');">
                                                 @csrf

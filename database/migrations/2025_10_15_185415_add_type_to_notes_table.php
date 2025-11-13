@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('notes', function (Blueprint $table) {
             // Добавляем новое поле 'type' со значением по умолчанию 'text'
-            $table->enum('type', ['text', 'handwriting'])->default('text')->after('content');
+            $table->enum('type', ['text', 'handwriting', 'voice'])->default('text')->after('content');
         });
 
         // Опционально: Обновляем существующие рукописные заметки,

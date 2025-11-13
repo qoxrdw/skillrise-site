@@ -13,6 +13,7 @@
     font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com;
 
     connect-src 'self' {{ config('app.env') == 'local' ? 'ws://localhost:3000' : '' }};
+    media-src 'self' blob:;  {{-- !!! ДОБАВЛЕНА ЭТА СТРОКА !!! --}}
 ">
 
     <title>{{ config('app.name', 'SkillRise') }}</title>

@@ -6,6 +6,8 @@ use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+// !!! ДОБАВЛЯЕМ ФАСАД STORAGE ДЛЯ РАБОТЫ С ФАЙЛАМИ !!!
+use Illuminate\Support\Facades\Storage;
 
 class NotesController extends Controller
 {
@@ -28,6 +30,72 @@ class NotesController extends Controller
         return view('notes.create_handwriting', compact('track'));
     }
 
+    // 🎙️ НОВЫЙ МЕТОД: Отображение формы для записи голосовой заметки
+    public function createVoice(Track $track)
+    {
+        if ($track->user_id !== Auth::id()) {
+            abort(403);
+        }
+        // Заметка для записи голоса
+        return view('notes.create_voice', compact('track'));
+    }
+
+
+    /**
+     * Сохраняет голосовую заметку.
+     * Ожидает файл с именем 'audio'.
+     * Возвращает JSON-ответ для AJAX-запроса.
+     */
+    public function storeVoice(Request $request, Track $track)
+    {
+        if ($track->user_id !== Auth::id()) {
+            return response()->json(['status' => 'error', 'message' => 'Недостаточно прав для этого действия.'], 403);
+        }
+
+        // 1. Валидация: проверяем, что поле 'audio' существует и является файлом
+        $request->validate([
+            'audio' => 'required|file|mimes:webm,mp3,wav,ogg,m4a|max:10240', // увеличено до 10MB
+        ]);
+
+        if ($request->hasFile('audio')) {
+            try {
+                $file = $request->file('audio');
+                // 2. Сохранение файла на диск. 'public' - это драйвер.
+                $path = $file->store('notes/voice/' . $track->id, 'public');
+
+                if (!$path) {
+                    Log::error('Failed to save audio file to disk.');
+                    return response()->json(['status' => 'error', 'message' => 'Не удалось сохранить аудиофайл.'], 500);
+                }
+
+                // 3. Создание записи в БД
+                // !!! ИСПРАВЛЕНО: Сохраняем путь к файлу в столбце 'content' !!!
+                $note = $track->notes()->create([
+                    'type' => 'voice', // Устанавливаем тип
+                    'content' => $path, // Путь к файлу теперь хранится в 'content'
+                ]);
+
+                if (!$note) {
+                    Storage::disk('public')->delete($path); // Удаляем файл, если запись в БД не удалась
+                    Log::error('Failed to create voice note record', ['path' => $path]);
+                    return response()->json(['status' => 'error', 'message' => 'Не удалось сохранить голосовую заметку.'], 500);
+                }
+
+                // Возвращаем успешный JSON ответ с URL для перенаправления
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Голосовая заметка успешно сохранена.',
+                    'redirect_url' => route('tracks.show', $track) . '?success=' . urlencode('Голосовая заметка успешно создана!'),
+                ], 200);
+
+            } catch (\Exception $e) {
+                Log::error('Exception while storing voice note', ['exception' => $e->getMessage()]);
+                return response()->json(['status' => 'error', 'message' => 'Ошибка при сохранении голосовой заметки: ' . $e->getMessage()], 500);
+            }
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Аудиофайл не был загружен.'], 400);
+    }
 
     public function store(Request $request, Track $track)
     {
@@ -76,7 +144,6 @@ class NotesController extends Controller
         $contentJson = $request->input('content_json');
 
         try {
-            // !!! ГЛАВНОЕ ИЗМЕНЕНИЕ: Установка типа заметки !!!
             $note = $track->notes()->create([
                 'content' => $contentJson,
                 'type' => 'handwriting', // <-- ЭТО КЛЮЧЕВОЙ МОМЕНТ
@@ -102,7 +169,11 @@ class NotesController extends Controller
             abort(403);
         }
 
-        // 💡 ПОДСЛАХОВКА (Обязательно, если заметка с 'handwriting' открывается по маршруту 'notes.edit')
+        // 🎙️ НОВАЯ ПРОВЕРКА: Голосовую заметку редактировать нельзя
+        if (($note->type ?? 'text') === 'voice') {
+            return redirect()->route('tracks.show', $track)->withErrors(['error' => 'Голосовые заметки нельзя редактировать.']);
+        }
+
         // Перенаправляем на правильный маршрут редактирования холста
         if (($note->type ?? 'text') === 'handwriting') {
             return redirect()->route('notes.edit.handwriting', [$track, $note]);
@@ -116,6 +187,12 @@ class NotesController extends Controller
         if ($track->user_id !== Auth::id() || $note->track_id !== $track->id) {
             abort(403);
         }
+
+        // 🎙️ НОВАЯ ПРОВЕРКА: Голосовую заметку нельзя обновить через этот метод
+        if (($note->type ?? 'text') === 'voice') {
+            return redirect()->route('tracks.show', $track)->withErrors(['error' => 'Голосовые заметки нельзя обновлять.']);
+        }
+
         Log::info('Update note request data', $request->all());
         $content = $request->input('content', '<p>Пустая заметка</p>');
         Log::info('Content to update', ['content' => $content]);
@@ -125,17 +202,15 @@ class NotesController extends Controller
             $content = '<p>Пустая заметка</p>';
         }
         try {
-            // !!! ИСПРАВЛЕНИЕ: Удаляем принудительную установку 'type' => 'text'.
-            // Обновляем ТОЛЬКО контент, сохраняя существующий тип заметки (text или handwriting).
             $note->update([
                 'content' => $content,
-                // 'type' => 'text' // <-- ЭТУ СТРОКУ НУЖНО УДАЛИТЬ ИЛИ ЗАКОММЕНТИРОВАТЬ
+                // 'type' => 'text' // Убедитесь, что эта строка закомментирована/удалена, если тип должен сохраняться
             ]);
         } catch (\Exception $e) {
             Log::error('Exception while updating note', ['exception' => $e->getMessage()]);
             return back()->withErrors(['error' => 'Ошибка при обновлении заметки']);
         }
-        return redirect()->route('tracks.show', $track);
+        return redirect()->route('tracks.show', $track)->with('success', 'Заметка успешно обновлена.');
     }
 
     public function editHandwriting(Track $track, Note $note)
@@ -144,7 +219,12 @@ class NotesController extends Controller
             abort(403);
         }
 
-        // 💡 ПОДСЛАХОВКА: Если заметка по ошибке пришла сюда с типом 'text', перенаправляем ее обратно
+        // 🎙️ НОВАЯ ПРОВЕРКА: Голосовую заметку редактировать нельзя
+        if (($note->type ?? 'text') === 'voice') {
+            return redirect()->route('tracks.show', $track)->withErrors(['error' => 'Голосовые заметки нельзя редактировать.']);
+        }
+
+        // Если заметка по ошибке пришла сюда с типом 'text', перенаправляем ее обратно
         if (($note->type ?? 'text') === 'text') {
             return redirect()->route('notes.edit', [$track, $note]);
         }
@@ -160,6 +240,12 @@ class NotesController extends Controller
         if ($track->user_id !== Auth::id() || $note->track_id !== $track->id) {
             abort(403);
         }
+
+        // 🎙️ НОВАЯ ПРОВЕРКА: Голосовую заметку нельзя обновить через этот метод
+        if (($note->type ?? 'text') === 'voice') {
+            return redirect()->route('tracks.show', $track)->withErrors(['error' => 'Голосовые заметки нельзя обновлять.']);
+        }
+
 
         $request->validate([
             'content_json' => 'required|string', // Fabric.js JSON
@@ -187,6 +273,12 @@ class NotesController extends Controller
             abort(403);
         }
         try {
+            // !!! ИСПРАВЛЕНИЕ: УДАЛЕНИЕ ФАЙЛА ДЛЯ ГОЛОСОВОЙ ЗАМЕТКИ !!!
+            // $note->content теперь гарантированно содержит путь к файлу
+            if ($note->type === 'voice' && $note->content) {
+                Storage::disk('public')->delete($note->content);
+            }
+
             $note->delete();
         } catch (\Exception $e) {
             Log::error('Exception while deleting note', ['exception' => $e->getMessage()]);

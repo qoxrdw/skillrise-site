@@ -48,6 +48,19 @@ Route::middleware(['auth'])->group(function () {
     // 4. Обновление
     Route::patch('/tracks/{track}/notes/{note}/update/handwriting', [NotesController::class, 'updateHandwriting'])->name('notes.update.handwriting');
 
+
+    // 🎙️ НОВЫЕ МАРШРУТЫ ДЛЯ ГОЛОСОВЫХ ЗАМЕТОК
+    // 1. Создание формы/интерфейса для записи
+    Route::get('/tracks/{track}/notes/create/voice', [NotesController::class, 'createVoice'])->name('notes.create.voice');
+
+    // 2. Сохранение аудиофайла и заметки
+    Route::post('/tracks/{track}/notes/store/voice', [NotesController::class, 'storeVoice'])->name('notes.store.voice');
+    // Мы не добавляем edit/update/destroy отдельно, так как голосовые заметки обычно не редактируются, а только удаляются
+    // (Удаление уже покрывается общим маршрутом destroy)
+
+
+
+
     // Маршруты для текстовых заметок (Quill)
     Route::get('/tracks/{track}/notes/create', [NotesController::class, 'create'])->name('notes.create');
     Route::post('/tracks/{track}/notes', [NotesController::class, 'store'])->name('notes.store');
