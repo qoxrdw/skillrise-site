@@ -57,10 +57,14 @@
                             {{-- Кнопка "Запись" (Основная, зеленая) --}}
                             <button type="button" id="record-button"
                                     class="h-12 px-6 rounded-[14px] border-2 border-green-600 bg-green-600 text-white hover:bg-green-700 hover:border-green-700 transition flex items-center justify-center">
-                                <svg id="record-icon" class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+
+                                {{-- НОВАЯ ИКОНКА: Более чистый и простой микрофон (Иконка HEROICONS) --}}
+                                <svg id="record-icon" class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7v4m0 0H8m4 0h4M7 11a5 5 0 0110 0v2a5 5 0 01-10 0v-2z"></path>
+                                </svg>
+
                                 <span id="record-text">{{ __('Запись') }}</span>
                             </button>
-
                             {{-- Кнопка "Стоп" (Опасная, красная) --}}
                             <button type="button" id="stop-button" disabled
                                     class="h-12 px-6 rounded-[14px] border-2 border-gray-300 bg-white text-black/80 hover:bg-red-600 hover:border-red-700 hover:text-white transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">

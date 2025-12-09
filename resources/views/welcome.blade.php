@@ -25,10 +25,12 @@
         <div class="flex flex-col sm:flex-row gap-4 mt-8 md:mt-12 w-full max-w-4xl px-4">
             @if (Route::has('login'))
                 @auth
-                    <a href="{{ route('dashboard') }}"
-                       class="w-full sm:w-[415px] h-16 md:h-[112px] border-2 border-black rounded-[20px] flex items-center justify-center text-lg md:text-2xl lg:text-[33px] leading-tight md:leading-[39px] font-normal text-black hover:bg-gray-50 transition-colors">
-                        {{ __('Перейти на главную') }}
-                    </a>
+                    <div class="flex justify-center w-full">
+                        <a href="{{ route('dashboard') }}"
+                           class="w-full sm:w-[415px] h-16 md:h-[112px] border-2 border-black rounded-[20px] flex items-center justify-center text-lg md:text-2xl lg:text-[33px] leading-tight md:leading-[39px] font-normal text-black hover:bg-gray-50 transition-colors">
+                            {{ __('Перейти на главную') }}
+                        </a>
+                    </div>
                 @else
                     <!-- Login Button -->
                     <a href="{{ route('login') }}"

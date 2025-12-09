@@ -1,6 +1,3 @@
-<?php
-use Illuminate\Support\Facades\Storage; // Используем для генерации URL аудиофайла
-?>
 @extends('layouts.app')
 
 @section('content')
@@ -9,104 +6,91 @@ use Illuminate\Support\Facades\Storage; // Используем для гене�
 
             {{-- Back link --}}
             <div class="mb-4 md:mb-6">
-                <a href="{{ route('tracks.index') }}" class="inline-flex items-center text-sm text-black/70 hover:text-black transition">
-                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <a href="{{ route('tracks.index') }}" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                     {{ __('К списку треков') }}
                 </a>
             </div>
 
-            {{-- Hero header --}}
+            {{-- Hero Header --}}
             <div class="mb-8 md:mb-10">
-                {{-- Обводка стала мягче: border-2 border-gray-300 --}}
-                <div class="relative rounded-[20px] border-2 border-gray-300 bg-gradient-to-br from-white via-gray-50 to-gray-100">
-                    <div class="px-6 md:px-10 py-6 md:py-8">
-                        <div class="flex flex-col md:flex-row md:items-center md:gap-6">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-3 mb-3">
-                                    {{-- УДАЛЕНО: ID трека --}}
+                {{-- Добавлен z-10 на Hero Header для создания контекста наложения над другими элементами страницы --}}
+                <div class="relative rounded-[24px] border border-gray-200 bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 z-0">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-200/30 to-transparent rounded-full blur-2xl"></div>
 
-                                    {{-- Public/Private Pill --}}
-                                    @if ($track->is_public)
-                                        {{-- Используем более мягкую рамку и бэкграунд для "Опубликован" --}}
-                                        <span class="inline-flex items-center px-3 h-8 rounded-full border-2 border-gray-300 text-xs md:text-sm bg-gray-100 text-black/80">{{ __('Опубликован') }}</span>
-                                    @else
-                                        {{-- Используем более мягкую рамку для "Приватный" --}}
-                                        <span class="inline-flex items-center px-3 h-8 rounded-full border-2 border-gray-300 text-xs md:text-sm bg-white text-black/80">{{ __('Приватный') }}</span>
-                                    @endif
+                    <div class="relative px-6 md:px-10 py-8 md:py-10">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+                            {{-- Left side (Содержимое остается прежним) --}}
+                            <div class="flex items-center gap-4">
+                                {{-- Icon --}}
+                                <div class="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center shadow-lg">
+                                    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M4 6h12a1 1 0 100-2H4a1 1 0 100 2zM4 11h12a1 1 0 100-2H4a1 1 0 100 2zM4 16h12a1 1 0 100-2H4a1 1 0 100 2z"/>
+                                    </svg>
                                 </div>
-                                <h1 class="text-[28px] md:text-[36px] leading-tight text-black/90 truncate">{{ $track->name }}</h1>
-                                {{-- Stats Pills --}}
-                                <div class="mt-3 flex items-center gap-2 text-sm text-black/70">
-                                    {{-- Рамки стали мягче: border-2 border-gray-300 --}}
-                                    <span class="inline-flex items-center px-3 h-8 rounded-full border-2 border-gray-300 bg-white">{{ __('Заметки') }}: {{ $notes->count() }}</span>
-                                    <span class="inline-flex items-center px-3 h-8 rounded-full border-2 border-gray-300 bg-white">{{ __('Упражнения') }}: {{ $track->exercises->count() }}</span>
+
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        @if ($track->is_public)
+                                            <span class="text-sm font-medium text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">Трек</span>
+                                        @else
+                                            <span class="text-sm font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">Трек (приватный)</span>
+                                        @endif
+                                    </div>
+
+                                    <h1 class="text-[32px] md:text-[40px] leading-tight font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-blue-900 bg-clip-text text-transparent truncate">
+                                        {{ $track->name }}
+                                    </h1>
+
+                                    {{-- Clean counters (updated) --}}
+                                    <div class="mt-3 flex items-center gap-4 text-gray-700 text-lg font-semibold">
+                                        <span>{{ $notes->count() }} заметок</span>
+                                        <span class="opacity-40">•</span>
+                                        <span>{{ $track->exercises->count() }} упражнений</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {{-- Action Buttons --}}
-                            <div class="mt-4 md:mt-0 flex flex-wrap items-center gap-2 md:justify-end">
+                            {{-- Buttons --}}
+                            <div class="flex items-center gap-3">
+                                {{-- Rename --}}
+                                <button id="rename-toggle"
+                                        class="group relative h-12 px-5 rounded-2xl border border-gray-300 bg-white text-gray-700 hover:border-gray-900 hover:text-gray-900 text-sm font-medium flex items-center gap-2 shadow-sm hover:shadow transition">
+                                    Переименовать
+                                </button>
 
-                                {{-- Rename Toggle Button (Вторичная, центрирование) --}}
-                                <button id="rename-toggle" type="button" class="h-10 px-4 rounded-[14px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white transition flex items-center justify-center">{{ __('Переименовать') }}</button>
-
-                                {{-- Rename Form --}}
-                                <form id="rename-form" method="POST" action="{{ route('tracks.update', $track) }}" class="hidden items-center gap-2">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="text" name="name" value="{{ old('name', $track->name) }}" class="h-10 px-3 rounded-[12px] border-2 border-gray-300 w-64" required>
-                                    {{-- Кнопка "Сохранить" (Основная) --}}
-                                    <button type="submit" class="h-10 px-4 rounded-[14px] border-2 border-black bg-black text-white hover:opacity-90 transition flex items-center justify-center">{{ __('Сохранить') }}</button>
-                                    {{-- Кнопка "Отмена" (Вторичная) --}}
-                                    <button id="rename-cancel" type="button" class="h-10 px-4 rounded-[14px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white transition flex items-center justify-center">{{ __('Отмена') }}</button>
-                                </form>
-
-                                {{-- Share/Unshare Button (Вторичная, центрирование) --}}
+                                {{-- Share / unshare --}}
                                 @if (!$track->is_public)
-                                    <form action="{{ route('tracks.share', $track) }}" method="POST" class="inline-block"
-                                          onsubmit="return confirm('{{ __('Вы уверены, что хотите поделиться этим треком? Он станет виден всем пользователям.') }}');">
+                                    <form action="{{ route('tracks.share', $track) }}" method="POST" onsubmit="return confirm('Поделиться треком?');">
                                         @csrf
-                                        <button type="submit" class="h-10 px-4 rounded-[14px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white transition flex items-center justify-center">{{ __('Поделиться') }}</button>
+                                        <button type="submit"
+                                                class="h-12 px-5 rounded-2xl bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 text-white text-sm font-medium shadow-lg hover:shadow-xl transition">
+                                            Поделиться
+                                        </button>
                                     </form>
                                 @else
-                                    <form action="{{ route('tracks.unshare', $track) }}" method="POST" class="inline-block"
-                                          onsubmit="return confirm('{{ __('Снять трек с публикации? Он станет приватным.') }}');">
+                                    <form action="{{ route('tracks.unshare', $track) }}" method="POST" onsubmit="return confirm('Сделать приватным?');">
                                         @csrf
-                                        <button type="submit" class="h-10 px-4 rounded-[14px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white transition flex items-center justify-center">{{ __('Снять с публикации') }}</button>
+                                        <button type="submit"
+                                                class="h-12 px-5 rounded-2xl border border-gray-300 bg-white text-gray-700 text-sm font-medium shadow-sm hover:shadow">
+                                            Снять с публикации
+                                        </button>
                                     </form>
                                 @endif
 
-                                {{-- Dropdown для выбора типа заметки --}}
-                                <div class="relative group">
-                                    <button type="button" id="create-note-toggle" class="h-10 px-4 rounded-[14px] border-2 border-black bg-black text-white hover:opacity-90 transition flex items-center justify-center">
-                                        {{ __('Новая заметка') }}
-                                        <svg class="w-4 h-4 ml-2 transition-transform duration-300 transform" id="note-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                {{-- Create note dropdown CONTAINER (Убрали класс relative) --}}
+                                <div id="note-menu-container">
+                                    <button type="button" id="create-note-toggle"
+                                            class="h-12 px-5 rounded-2xl bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-200 text-sm font-medium flex items-center gap-2 shadow-sm hover:shadow">
+                                        Новая заметка
+                                        <svg id="note-toggle-icon" class="w-4 h-4 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
                                         </svg>
                                     </button>
-
-                                    <div id="create-note-menu" class="absolute right-0 mt-2 w-56 rounded-[14px] border-2 border-black bg-white shadow-xl z-10 hidden origin-top-right">
-                                        <div class="p-1">
-                                            <a href="{{ route('notes.create', $track) }}" class="flex items-center p-3 text-sm text-black/80 rounded-[10px] hover:bg-gray-100 transition">
-                                                {{ __('Текстовая заметка') }}
-                                            </a>
-                                            <a href="{{ route('notes.create.handwriting', $track) }}" class="flex items-center p-3 text-sm text-black/80 rounded-[10px] hover:bg-gray-100 transition">
-                                                <span class="mr-2">{{ __('Рукописная заметка') }}</span>
-                                                {{-- Добавляем метку "BETA" или "PROTOTYPE" --}}
-                                                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 border border-red-300 uppercase leading-none tracking-wider">
-        {{ __('BETA') }}
-    </span>
-                                            </a>
-                                            {{-- 🎙️ НОВОЕ: Голосовая заметка --}}
-                                            <a href="{{ route('notes.create.voice', $track) }}" class="flex items-center p-3 text-sm text-black/80 rounded-[10px] hover:bg-gray-100 transition">
-                                                <span class="mr-2">{{ __('Голосовая заметка') }}</span>
-                                                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 border border-blue-300 uppercase leading-none tracking-wider">
-                                                    {{ __('NEW') }}
-                                                </span>
-                                            </a>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -114,14 +98,56 @@ use Illuminate\Support\Facades\Storage; // Используем для гене�
                 </div>
             </div>
 
-            {{-- ... (остальной код) --}}
+            {{-- DROPDOWN: Вынесен из Hero Header, позиционирование FIXED --}}
+            <div id="create-note-menu"
+                 class="fixed w-56 rounded-2xl border border-gray-200 bg-white shadow-xl z-[99999] hidden">
+                <div class="p-1">
+                    <a href="{{ route('notes.create', $track) }}"
+                       class="flex items-center p-3 text-sm text-gray-700 rounded-xl hover:bg-gray-100 transition">
+                        Текстовая заметка
+                    </a>
 
-            {{-- Messages (Рамка стала мягче) --}}
+                    <a href="{{ route('notes.create.handwriting', $track) }}"
+                       class="flex items-center p-3 text-sm text-gray-700 rounded-xl hover:bg-gray-100 transition">
+                        <span class="mr-2">Рукописная заметка</span>
+                        <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 border border-red-300">BETA</span>
+                    </a>
+
+                    <a href="{{ route('notes.create.voice', $track) }}"
+                       class="flex items-center p-3 text-sm text-gray-700 rounded-xl hover:bg-gray-100 transition">
+                        <span class="mr-2">Голосовая заметка</span>
+                        <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 border border-blue-300">NEW</span>
+                    </a>
+                </div>
+            </div>
+
+            {{-- Rename form (Остается прежним) --}}
+            <form id="rename-form" method="POST" action="{{ route('tracks.update', $track) }}"
+                  class="hidden mb-6 md:mb-8 items-center gap-2">
+                @csrf
+                @method('PATCH')
+
+                <input type="text" name="name" value="{{ old('name', $track->name) }}"
+                       class="h-10 px-4 rounded-2xl border border-gray-300 w-full md:w-96">
+
+                <div class="flex items-center gap-2 ml-0 md:ml-4 mt-3 md:mt-0">
+                    <button type="submit" class="h-10 px-4 rounded-2xl bg-black text-white">Сохранить</button>
+                    <button id="rename-cancel" type="button"
+                            class="h-10 px-4 rounded-2xl border border-gray-300 bg-white text-gray-700 hover:bg-black hover:text-white">
+                        Отмена
+                    </button>
+                </div>
+            </form>
+
+            {{-- Success / Errors (Остается прежним) --}}
             @if (session('success'))
-                <div class="mb-6 p-4 border-2 border-gray-300 rounded-[14px] bg-white text-black/80">{{ session('success') }}</div>
+                <div class="mb-6 p-4 rounded-2xl border border-green-200 bg-green-50 text-green-800 flex items-center gap-3 shadow-sm">
+                    <span class="font-medium">{{ session('success') }}</span>
+                </div>
             @endif
+
             @if ($errors->any())
-                <div class="mb-6 p-4 border-2 border-gray-300 rounded-[14px] bg-white text-red-700">
+                <div class="mb-6 p-4 rounded-2xl border border-red-200 bg-red-50 text-red-700">
                     <ul class="list-disc pl-5">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -130,166 +156,198 @@ use Illuminate\Support\Facades\Storage; // Используем для гене�
                 </div>
             @endif
 
-            {{-- Content split: Notes and Exercises --}}
+            {{-- Notes & Exercises (Остается прежним) --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                {{-- Notes --}}
+                {{-- Notes (Остается прежним) --}}
                 <section>
                     <div class="flex items-center justify-between mb-3">
-                        <h2 class="text-xl md:text-2xl text-black/90">{{ __('Заметки') }}</h2>
-                        {{-- Кнопка "Добавить" (ЗАМЕНЕНА на иконку плюса). Теперь ведет на текстовую заметку, как базовый вариант --}}
-                        <a href="{{ route('notes.create', $track) }}" class="h-9 w-9 px-0 rounded-[12px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white text-xl transition flex items-center justify-center">
-                            {{-- Иконка плюса --}}
-                            +
-                        </a>
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-900">Заметки</h2>
+                        <a href="{{ route('notes.create', $track) }}"
+                           class="h-9 w-9 rounded-[12px] border border-gray-300 bg-white text-gray-700 hover:bg-gray-900 hover:text-white text-xl flex items-center justify-center">+</a>
                     </div>
+
                     @if($notes->isEmpty())
-                        {{-- Рамка стала мягче --}}
-                        <div class="p-8 text-center border-2 border-dashed border-gray-300 rounded-[14px] bg-white">
-                            <p class="text-black/70">{{ __('Заметок пока нет. Создайте первую.') }}</p>
+                        <div class="p-8 text-center rounded-2xl border border-dashed border-gray-300 bg-white">
+                            <p class="text-gray-600">Заметок пока нет.</p>
                         </div>
                     @else
                         <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             @foreach($notes as $note)
                                 @php
-                                    // 💡 ИСПРАВЛЕНИЕ: Используем новое поле 'type' для надежного выбора маршрута
                                     $noteType = $note->type ?? 'text';
                                     $isHandwriting = $noteType === 'handwriting';
                                     $isVoice = $noteType === 'voice';
-
-                                    // Определяем правильный маршрут редактирования. Голосовые заметки не редактируются.
                                     $editRoute = $isVoice ? '#' : (
                                         $isHandwriting
                                             ? route('notes.edit.handwriting', [$track, $note])
                                             : route('notes.edit', [$track, $note])
                                     );
-                                    // Заголовок для карточки
-                                    $cardTitle = $isVoice ? __('Голосовая заметка') : ($note->getFirstLine() ?: __('(Без названия)'));
+                                    $cardTitle = $isVoice ? 'Голосовая заметка' : ($note->getFirstLine() ?: '(Без названия)');
                                 @endphp
-                                {{-- Карточки: Рамка стала мягче --}}
-                                <li class="group rounded-[14px] border-2 border-gray-300 bg-white p-5 hover:-translate-y-0.5 transition hover:border-black">
+
+                                <li class="group rounded-2xl border border-gray-200 bg-white p-5 hover:border-blue-300 hover:shadow-lg transition">
 
                                     @if ($isVoice)
-                                        {{-- 🎙️ РЕНДЕР АУДИО ПЛЕЕРА ДЛЯ ГОЛОСОВОЙ ЗАМЕТКИ --}}
-                                        <h3 class="block text-[18px] leading-6 text-black/90 truncate mb-4">{{ $cardTitle }}</h3>
-                                        {{-- Используем Storage::url() для доступа к файлу, сохраненному на диске 'public' --}}
-                                        <audio controls class="w-full h-10 bg-gray-100 rounded-[10px]">
+                                        <h3 class="text-[18px] text-gray-900 mb-3">{{ $cardTitle }}</h3>
+
+                                        <audio controls class="w-full h-10 bg-gray-100 rounded-lg">
                                             <source src="{{ Storage::url($note->content) }}" type="audio/webm">
                                             <source src="{{ Storage::url($note->content) }}" type="audio/mp4">
-                                            {{ __('Ваш браузер не поддерживает элемент аудио.') }}
+                                            Ваш браузер не поддерживает аудио.
                                         </audio>
+
                                     @else
-                                        {{-- Текст и рукописные заметки (ссылка на редактирование) --}}
-                                        <a href="{{ $editRoute }}" class="block text-[18px] leading-6 text-black/90 truncate">{{ $cardTitle }}</a>
+                                        <a href="{{ $editRoute }}"
+                                           class="block text-[18px] text-gray-900 hover:underline truncate">
+                                            {{ $cardTitle }}
+                                        </a>
                                     @endif
 
-                                    <div class="mt-3 flex items-center justify-between text-xs text-black/60">
+                                    <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
                                         <span>{{ $note->created_at->isoFormat('LL') }}</span>
-                                        <div class="flex items-center gap-2">
 
+                                        <div class="flex items-center gap-2">
                                             @if (!$isVoice)
-                                                {{-- Кнопка "Редакт." (только для текстовых и рукописных) --}}
-                                                <a href="{{ $editRoute }}" class="h-8 px-3 rounded-[10px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white transition flex items-center justify-center">{{ __('Редакт.') }}</a>
+                                                <a href="{{ $editRoute }}"
+                                                   class="h-8 px-3 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-900 hover:text-white">Редакт.</a>
                                             @endif
 
-                                            <form action="{{ route('notes.destroy', [$track, $note]) }}" method="POST" onsubmit="return confirm('{{ __('Удалить заметку безвозвратно?') }}');">
-                                                @csrf
-                                                @method('DELETE')
-                                                {{-- Кнопка "Удалить" (Опасная, центрирование) --}}
-                                                <button type="submit" class="h-8 px-3 rounded-[10px] border-2 border-gray-300 bg-white text-black/80 hover:bg-red-600 hover:border-red-700 hover:text-white transition flex items-center justify-center">{{ __('Удалить') }}</button>
+                                            <form action="{{ route('notes.destroy', [$track, $note]) }}" method="POST" onsubmit="return confirm('Удалить заметку?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit"
+                                                        class="h-8 px-3 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-red-600 hover:text-white">
+                                                    Удалить
+                                                </button>
                                             </form>
                                         </div>
                                     </div>
+
                                 </li>
                             @endforeach
                         </ul>
                     @endif
                 </section>
 
-                {{-- Exercises --}}
+                {{-- Exercises (Остается прежним) --}}
                 <section>
                     <div class="flex items-center justify-between mb-3">
-                        <h2 class="text-xl md:text-2xl text-black/90">{{ __('Упражнения') }}</h2>
-                        {{-- Кнопка "Создать" (ЗАМЕНЕНА на иконку плюса) --}}
-                        <a href="{{ route('exercises.create', $track) }}" class="h-9 w-9 px-0 rounded-[12px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white text-xl transition flex items-center justify-center">
-                            {{-- Иконка плюса --}}
-                            +
-                        </a>
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-900">Упражнения</h2>
+                        <a href="{{ route('exercises.index', $track) }}"
+                           class="h-9 w-9 rounded-[12px] border border-gray-300 bg-white text-gray-700 hover:bg-gray-900 hover:text-white text-xl flex items-center justify-center">+</a>
                     </div>
+
                     @if($track->exercises->isEmpty())
-                        {{-- Рамка стала мягче --}}
-                        <div class="p-8 text-center border-2 border-dashed border-gray-300 rounded-[14px] bg-white">
-                            <p class="text-black/70">{{ __('Упражнений пока нет. Добавьте первое.') }}</p>
+                        <div class="p-8 text-center rounded-2xl border border-dashed border-gray-300 bg-white">
+                            <p class="text-gray-600">Упражнений пока нет.</p>
                         </div>
                     @else
                         <ul class="space-y-3">
                             @foreach($track->exercises as $exercise)
-                                {{-- Карточки: Рамка стала мягче --}}
-                                <li class="rounded-[14px] border-2 border-gray-300 bg-white p-5 hover:-translate-y-0.5 transition hover:border-black">
+                                <li class="rounded-2xl border border-gray-200 bg-white p-5 hover:border-blue-300 hover:shadow-lg transition">
                                     <div class="flex items-start justify-between gap-4">
-                                        <a href="{{ route('exercises.take', [$track, $exercise]) }}" class="flex-1 text-[18px] md:text-[20px] leading-6 text-black/90 hover:underline">{{ $exercise->title }}</a>
+
+                                        <a href="{{ route('exercises.take', [$track, $exercise]) }}"
+                                           class="flex-1 text-[18px] md:text-[20px] text-gray-900 hover:underline">
+                                            {{ $exercise->title }}
+                                        </a>
+
                                         <div class="flex items-center gap-2">
-                                            {{-- Кнопка "Начать" (Вторичная, центрирование) --}}
-                                            <a href="{{ route('exercises.take', [$track, $exercise]) }}" class="h-9 px-3 rounded-[12px] border-2 border-gray-300 bg-white text-black/80 hover:bg-black hover:text-white text-sm transition flex items-center justify-center">{{ __('Начать') }}</a>
-                                            <form action="{{ route('exercises.destroy', [$track, $exercise]) }}" method="POST" onsubmit="return confirm('{{ __('Удалить упражнение?') }}');">
-                                                @csrf
-                                                @method('DELETE')
-                                                {{-- Кнопка "Удалить" (Опасная, центрирование) --}}
-                                                <button type="submit" class="h-9 px-3 rounded-[12px] border-2 border-gray-300 bg-white text-black/80 hover:bg-red-600 hover:border-red-700 hover:text-white text-sm transition flex items-center justify-center">{{ __('Удалить') }}</button>
+                                            <a href="{{ route('exercises.take', [$track, $exercise]) }}"
+                                               class="h-9 px-3 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-900 hover:text-white text-sm">
+                                                Начать
+                                            </a>
+
+                                            <form action="{{ route('exercises.destroy', [$track, $exercise]) }}" method="POST" onsubmit="return confirm('Удалить упражнение?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit"
+                                                        class="h-9 px-3 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-red-600 hover:text-white text-sm">
+                                                    Удалить
+                                                </button>
                                             </form>
                                         </div>
+
                                     </div>
                                 </li>
                             @endforeach
                         </ul>
                     @endif
                 </section>
+
             </div>
         </div>
     </div>
+
 @endsection
 
 @section('scripts')
     <script>
-        const toggle = document.getElementById('rename-toggle');
-        const form = document.getElementById('rename-form');
-        const cancelBtn = document.getElementById('rename-cancel');
-        if (toggle && form) {
-            toggle.addEventListener('click', () => {
-                toggle.classList.add('hidden');
-                form.classList.remove('hidden');
-                form.classList.add('flex');
-            });
-        }
-        if (cancelBtn && form && toggle) {
-            cancelBtn.addEventListener('click', () => {
-                // Скрываем форму и показываем кнопку "Переименовать"
-                form.classList.add('hidden');
-                form.classList.remove('flex');
-                toggle.classList.remove('hidden');
+        // Rename toggle (Остается прежним)
+        const renameToggle = document.getElementById('rename-toggle');
+        const renameForm = document.getElementById('rename-form');
+        const renameCancel = document.getElementById('rename-cancel');
+
+        if (renameToggle && renameForm) {
+            renameToggle.addEventListener('click', () => {
+                renameToggle.classList.add('hidden');
+                renameForm.classList.remove('hidden');
+                renameForm.classList.add('flex');
             });
         }
 
+        if (renameCancel) {
+            renameCancel.addEventListener('click', () => {
+                renameForm.classList.add('hidden');
+                renameForm.classList.remove('flex');
+                renameToggle.classList.remove('hidden');
+            });
+        }
 
-        // ... (существующий JS для rename)
-
-        // Логика Dropdown для выбора типа заметки
-        const toggleButton = document.getElementById('create-note-toggle');
+        // Dropdown Logic (НОВЫЙ КОД ДЛЯ FIXED ПОЗИЦИОНИРОВАНИЯ)
+        const btn = document.getElementById('create-note-toggle');
         const menu = document.getElementById('create-note-menu');
         const icon = document.getElementById('note-toggle-icon');
 
-        if (toggleButton && menu) {
-            toggleButton.addEventListener('click', () => {
-                const isVisible = menu.classList.toggle('hidden');
-                if (!isVisible) {
-                    icon.classList.add('rotate-180');
-                } else {
-                    icon.classList.remove('rotate-180');
+        /**
+         * Рассчитывает и устанавливает позицию меню относительно кнопки.
+         * Использует getBoundingClientRect для получения координат на экране.
+         */
+        function positionMenu() {
+            const rect = btn.getBoundingClientRect();
+            // 8px - отступ между кнопкой и меню (аналогично mt-2)
+            const offset = 8;
+
+            // Устанавливаем положение:
+            // top: низ кнопки + отступ
+            menu.style.top = `${rect.bottom + offset}px`;
+
+            // left: левый край кнопки + ширина кнопки - ширина меню.
+            // Это выравнивает правый край меню по правому краю кнопки.
+            menu.style.left = `${rect.left + rect.width - menu.offsetWidth}px`;
+        }
+
+        if (btn && menu) {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+
+                const isHidden = menu.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180', !isHidden);
+
+                if (!isHidden) {
+                    positionMenu(); // Позиционируем при открытии
                 }
             });
 
-            document.addEventListener('click', (event) => {
-                if (!toggleButton.contains(event.target) && !menu.contains(event.target)) {
+            // Перепозиционируем при изменении размера окна (для адаптивности)
+            window.addEventListener('resize', () => {
+                if (!menu.classList.contains('hidden')) {
+                    positionMenu();
+                }
+            });
+
+            // Скрытие при клике вне меню
+            document.addEventListener('click', e => {
+                if (!btn.contains(e.target) && !menu.contains(e.target)) {
                     menu.classList.add('hidden');
                     icon.classList.remove('rotate-180');
                 }

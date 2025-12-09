@@ -78,6 +78,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tracks/{track}/exercises/{exercise}/take', [ExercisesController::class, 'take'])->name('exercises.take');
     Route::post('/tracks/{track}/exercises/{exercise}/submit', [ExercisesController::class, 'submit'])->name('exercises.submit');
     Route::delete('/tracks/{track}/exercises/{exercise}', [ExercisesController::class, 'destroy'])->name('exercises.destroy');
+    // AI генерация упражнений
+    Route::get('/tracks/{track}/exercises/create-ai', [ExercisesController::class, 'createWithAI'])->name('exercises.create-ai');
+    Route::post('/tracks/{track}/exercises/generate-ai', [ExercisesController::class, 'generateWithAI'])->name('exercises.generate-ai');
 
 
     // Удалены старые маршруты для упражнений, которые больше не используются

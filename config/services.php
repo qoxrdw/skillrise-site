@@ -39,5 +39,8 @@ return [
         'token' => env('FIGMA_TOKEN', ''),
         'verify' => env('FIGMA_VERIFY', true),
     ],
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY'),
+    ],
 
 ];
