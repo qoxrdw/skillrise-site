@@ -8,11 +8,18 @@ use Illuminate\Support\Facades\Log;
 class GeminiService
 {
     protected $apiKey;
-    protected $baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+    protected $baseUrl;
+    protected $proxyUrl;
+    protected $useProxy;
 
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key');
+        $this->proxyUrl = config('services.gemini.proxy_url');
+        $this->baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+
+        // Определяем, использовать ли прокси (если URL прокси указан)
+        $this->useProxy = !empty($this->proxyUrl);
     }
 
     /**
@@ -21,12 +28,28 @@ class GeminiService
     public function generateExerciseFromNote(string $noteContent): array
     {
         $prompt = $this->buildPrompt($noteContent);
-        $modelName = 'gemini-2.5-flash';
+        $modelName = 'gemini-2.5-flash'; // или 'gemini-2.5-flash' если доступен
 
         try {
+            if ($this->useProxy) {
+                // Используем Cloudflare Worker как прокси
+                $url = $this->proxyUrl . '?key=' . $this->apiKey . '&model=' . $modelName;
+
+                Log::info('Sending request to Gemini via Cloudflare Worker', [
+                    'proxy_url' => $this->proxyUrl,
+                    'model' => $modelName
+                ]);
+            } else {
+                // Прямой запрос к Gemini API
+                $url = "{$this->baseUrl}/models/{$modelName}:generateContent?key={$this->apiKey}";
+
+                Log::info('Sending direct request to Gemini API', [
+                    'model' => $modelName
+                ]);
+            }
+
             $response = Http::timeout(60)
-                // Используем переменную $modelName
-                ->post("{$this->baseUrl}/models/{$modelName}:generateContent?key={$this->apiKey}", [
+                ->post($url, [
                     'contents' => [
                         [
                             'parts' => [
@@ -56,7 +79,15 @@ class GeminiService
 
                 $generatedText = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
 
-                Log::info('Gemini response', ['text' => $generatedText]);
+                if (empty($generatedText)) {
+                    Log::error('Gemini returned empty text', ['data' => $data]);
+                    return [
+                        'success' => false,
+                        'error' => 'API вернул пустой ответ.'
+                    ];
+                }
+
+                Log::info('Gemini response received', ['text_length' => strlen($generatedText)]);
 
                 return [
                     'success' => true,
@@ -65,7 +96,10 @@ class GeminiService
                 ];
             }
 
-            Log::error('Gemini API failed', ['response' => $response->body()]);
+            Log::error('Gemini API failed', [
+                'status' => $response->status(),
+                'response' => $response->body()
+            ]);
 
             return [
                 'success' => false,
@@ -73,7 +107,9 @@ class GeminiService
             ];
 
         } catch (\Exception $e) {
-            Log::error('Gemini API Error: ' . $e->getMessage());
+            Log::error('Gemini API Error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
 
             return [
                 'success' => false,

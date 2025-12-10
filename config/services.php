@@ -41,6 +41,7 @@ return [
     ],
     'gemini' => [
         'api_key' => env('GEMINI_API_KEY'),
+        'proxy_url' => env('GEMINI_PROXY_URL'),
     ],
 
 ];
