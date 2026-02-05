@@ -43,7 +43,7 @@ class ExercisesController extends Controller
 
         // Получаем только текстовые и рукописные заметки (не голосовые)
         $notes = Note::where('track_id', $track->id)
-            ->whereIn('type', ['text', 'handwriting'])
+            ->whereIn('type', ['text'])
             ->orderBy('created_at', 'desc')
             ->get();
 

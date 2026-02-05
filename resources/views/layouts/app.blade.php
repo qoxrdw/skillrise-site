@@ -55,10 +55,20 @@ media-src 'self' blob:; {{-- !!! ДОБАВЛЕНА ЭТА СТРОКА !!! --}}
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <!-- Scripts -->
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        body {
+            font-family: 'Work Sans', sans-serif;
+        }
+    </style>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Alpine.js (необходим для работы списков) --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 </head>
 
@@ -66,82 +76,60 @@ media-src 'self' blob:; {{-- !!! ДОБАВЛЕНА ЭТА СТРОКА !!! --}}
 
 <div class="min-h-screen flex">
 
-    {{-- Sidebar with Figma design --}}
-
-    <aside class="w-[614px] h-[1333px] bg-black/10 fixed inset-y-0 left-0 top-[-53px] z-40 rounded-[15px] transform transition-transform" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
-
-        <div class="pt-8 md:pt-12 px-6 md:px-24">
-
-            <!-- Logo -->
-
-            <div class="mb-8 md:mb-16">
-
-                <x-logo class="w-16 h-10 md:w-[89px] md:h-[59px]" />
-
+    {{-- Сайдбар --}}
+    <aside class="w-[30%] bg-[#EBEBEB] fixed inset-y-0 left-0 z-40 border-r border-black/5">
+        <div class="pt-12 px-12">
+            {{-- Логотип --}}
+            <div class="mb-12 md:mb-20">
+                <x-logo class="w-20 h-12 md:w-[120px] md:h-[80px]" />
             </div>
 
+            <nav class="space-y-8"> {{-- Увеличил вертикальный отступ между пунктами --}}
+                <a href="{{ route('dashboard') }}" class="block text-[32px] font-normal text-black hover:opacity-70 transition-opacity">
+                    Главная
+                </a>
 
+                {{-- Секция: Мои треки --}}
+                <div x-data="{ open: false }">
+                    <div class="flex items-center justify-between group">
+                        <a href="{{ route('tracks.index') }}" class="text-[32px] font-normal text-black hover:opacity-70 transition-opacity">
+                            Мои треки
+                        </a>
+                        <button @click="open = !open" class="p-2 hover:bg-black/5 rounded-md transition-colors">
+                            <svg :class="{'rotate-0': open, '-rotate-90': !open}" class="w-6 h-6 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
 
-            <!-- Navigation -->
-
-            <nav class="space-y-2 md:space-y-4">
-
-                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
-
-                            class="group relative block text-lg md:text-[25px] leading-tight md:leading-[29px] font-normal text-black py-3 md:py-4 px-4 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-white/20 hover:shadow-lg hover:text-gray-900 active:scale-95 active:bg-white/30 {{ request()->routeIs('dashboard') ? 'font-medium bg-white/10 shadow-md' : '' }}">
-
-                    <span class="relative z-10">{{ __('Главная') }}</span>
-
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-
-                </x-nav-link>
-
-
-
-
-
-                <div class="relative">
-
-                    <x-nav-link :href="route('tracks.index')" :active="request()->routeIs('tracks.*')"
-
-                                class="group relative flex items-center justify-between text-lg md:text-[25px] leading-tight md:leading-[29px] font-normal text-black py-3 md:py-4 px-4 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-white/20 hover:shadow-lg hover:text-gray-900 active:scale-95 active:bg-white/30 {{ request()->routeIs('tracks.*') ? 'font-medium bg-white/10 shadow-md' : '' }}">
-
-                        <span class="relative z-10">{{ __('Мои треки') }}</span>
-
-                        <svg class="w-3 h-3 md:w-4 md:h-4 text-black/80 transform transition-all duration-300 ease-in-out group-hover:text-black group-hover:scale-110 {{ request()->routeIs('tracks.*') ? 'rotate-0' : '-rotate-90' }}" fill="currentColor" viewBox="0 0 20 20">
-
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-
-                        </svg>
-
-                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-
-                    </x-nav-link>
-
+                    <div x-show="open" x-collapse class="mt-6 ml-8 space-y-5">
+                        @auth
+                            @foreach(auth()->user()->tracks as $t)
+                                <a href="{{ route('tracks.show', $t) }}" class="block text-[24px] text-black/60 hover:text-black transition-colors truncate">
+                                    {{ $t->name }}
+                                </a>
+                            @endforeach
+                        @else
+                            <span class="block text-[20px] text-black/40 italic">Войдите, чтобы увидеть треки</span>
+                        @endauth
+                    </div>
                 </div>
 
+                <a href="{{ route('tracks.sharing') }}" class="block text-[32px] font-normal text-black hover:opacity-70 transition-opacity">
+                    Шеринг
+                </a>
 
+                <a href="#" class="block text-[32px] font-normal text-black hover:opacity-70 transition-opacity">
+                    Уведомления
+                </a>
 
-                <x-nav-link :href="route('tracks.sharing')" :active="request()->routeIs('tracks.sharing')"
+                <a href="{{ route('profile.edit') }}" class="block text-[32px] font-normal text-black hover:opacity-70 transition-opacity">
+                    Профиль
+                </a>
 
-                            class="group relative flex items-center justify-between text-lg md:text-[25px] leading-tight md:leading-[29px] font-normal text-black py-3 md:py-4 px-4 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-white/20 hover:shadow-lg hover:text-gray-900 active:scale-95 active:bg-white/30 {{ request()->routeIs('tracks.sharing') ? 'font-medium bg-white/10 shadow-md' : '' }}">
-
-                    <span class="relative z-10">{{ __('Шеринг') }}</span>
-
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-black/80 transform transition-all duration-300 ease-in-out group-hover:text-black group-hover:scale-110 -rotate-90" fill="currentColor" viewBox="0 0 20 20">
-
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-
-                    </svg>
-
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-
-                </x-nav-link>
 
             </nav>
-
         </div>
-
     </aside>
 
 
@@ -152,82 +140,12 @@ media-src 'self' blob:; {{-- !!! ДОБАВЛЕНА ЭТА СТРОКА !!! --}}
 
 
 
-    {{-- Main area --}}
+    <main class="ml-[30%] w-[70%]">
+        @yield('content')
+    </main>
 
-    <div class="flex-1 flex flex-col ml-0 md:ml-[614px]">
-
-        <!-- Header removed for dashboard, content is handled in dashboard.blade.php -->
-
-        @if (!request()->routeIs('dashboard'))
-
-            <header class="h-16 flex items-center justify-between px-6 border-b border-gray-200 bg-white">
-
-                @if (request()->routeIs('tracks.show'))
-
-                    <form method="GET" action="{{ route('tracks.index') }}" class="relative w-full max-w-md">
-
-                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Поиск треков" class="w-full h-9 pl-9 pr-3 rounded-full border border-gray-300 outline-none focus:ring-0">
-
-                        <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2">
-
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-
-                        </button>
-
-                    </form>
-
-                @else
-
-                    <div></div>
-
-                @endif
-
-                <div class="ml-4 flex items-center gap-3">
-
-                    <button type="button" class="md:hidden h-9 w-9 rounded-full border border-gray-300 flex items-center justify-center" @click="sidebarOpen = !sidebarOpen" aria-label="Toggle menu">
-
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-
-                    </button>
-
-                    @auth
-
-                        <span class="text-sm text-gray-700">{{ Auth::user()->name }}</span>
-
-                        <form method="POST" action="{{ route('logout') }}">
-
-                            @csrf
-
-                            <button type="submit" class="h-9 px-4 rounded-full border border-gray-900 text-sm">Выйти</button>
-
-                        </form>
-
-                    @endauth
-
-                    <a href="{{ route('profile.edit') }}" class="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center">
-
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-
-                    </a>
-
-                </div>
-
-            </header>
-
-        @endif
-
-
-
-        <main class="flex-1 {{ request()->routeIs('dashboard') ? '' : 'p-0' }} bg-white">
-
-            @yield('content')
-
-        </main>
-
-    </div>
 
 </div>
-
 
 
 @yield('scripts')

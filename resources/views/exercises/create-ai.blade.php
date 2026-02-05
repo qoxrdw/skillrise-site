@@ -127,9 +127,9 @@
                                             <div class="flex-1">
                                                 <div class="text-[18px] text-gray-900 mb-1 font-medium">
                                                     @if($note->type === 'handwriting')
-                                                        ✍️ {{ $note->getFirstLine() ?: __('Рукописная заметка') }}
+                                                        {{ $note->getFirstLine() ?: __('Рукописная заметка') }}
                                                     @elseif($note->type === 'voice')
-                                                        🎤 {{ __('Голосовая заметка') }}
+                                                        {{ __('Голосовая заметка') }}
                                                     @else
                                                         📝 {{ $note->getFirstLine() ?: __('(Без названия)') }}
                                                     @endif

@@ -12,7 +12,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Work Sans', 'Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['"Work Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
             },
         },
     },
