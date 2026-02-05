@@ -119,7 +119,7 @@ media-src 'self' blob:; {{-- !!! ДОБАВЛЕНА ЭТА СТРОКА !!! --}}
                     Шеринг
                 </a>
 
-                <a href="#" class="block text-[32px] font-normal text-black hover:opacity-70 transition-opacity">
+                <a href="{{ route('notifications.index') }}" class="block text-[32px] font-normal text-black hover:opacity-70 transition-opacity">
                     Уведомления
                 </a>
 

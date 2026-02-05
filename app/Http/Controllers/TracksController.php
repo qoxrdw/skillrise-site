@@ -111,16 +111,18 @@ class TracksController extends Controller
         return redirect()->route('tracks.show', $newTrack)->with('success', 'Трек успешно добавлен в ваши треки!');
     }
 
-    public function share(Track $track)
+    public function togglePublish(Track $track)
     {
         if ($track->user_id !== Auth::id()) {
             abort(403, 'У вас нет прав для публикации этого трека.');
         }
+        $track->update([
+            'is_public' => !$track->is_public
+        ]);
 
-        $track->is_public = true;
-        $track->save();
+        $status = $track->is_public ? 'опубликован' : 'снят с публикации';
 
-        return redirect()->route('tracks.show', $track)->with('success', 'Трек успешно опубликован и теперь виден всем пользователям!');
+        return back()->with('success', "Трек успешно {$status}.");
     }
 
     public function unshare(Track $track)

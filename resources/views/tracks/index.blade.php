@@ -5,20 +5,30 @@
         {{-- Основной контейнер с отступом слева для сайдбара --}}
         <div class="w-full max-w-[1100px] ml-20 px-8 pt-10 pb-20">
 
-            {{-- Верхняя панель: Поиск (укороченный) + Смайлик --}}
-            <div class="flex items-center gap-10 mb-16">
+            {{-- Верхняя панель: Поиск + Смайлик в разных концах --}}
+            <div class="flex items-center justify-between mb-16 w-full"> {{-- Добавлен justify-between --}}
+
                 <div class="w-full max-w-[550px] relative">
                     <form method="GET" action="{{ route('tracks.index') }}" class="relative">
                         <input type="text" name="q" value="{{ request('q') }}" placeholder="Поиск треков, упражнений"
                                class="w-full h-[61px] px-8 text-[24px] border-2 border-black rounded-[30px] outline-none focus:ring-0 placeholder-black/60 font-normal">
                         <button type="submit" class="absolute right-6 top-1/2 -translate-y-1/2">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-60"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-60">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
                         </button>
                     </form>
                 </div>
 
+                {{-- Смайлик теперь будет прижат к правому краю --}}
                 <a href="{{ route('profile.edit') }}" class="w-[61px] h-[61px] border-2 border-black rounded-full flex items-center justify-center hover:bg-black/5 transition-all">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                    </svg>
                 </a>
             </div>
 

@@ -1,36 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="py-6 md:py-10">
-        <div class="max-w-6xl mx-auto">
+    <div class="min-h-screen bg-white px-8 pt-8 pb-20 font-sans">
+        <div class="max-w-[1000px]">
 
-            {{-- Back link --}}
-            <div class="mb-4 md:mb-6">
-                <a href="{{ route('exercises.index', $track) }}" class="inline-flex items-center text-sm text-black/70 hover:text-black">
-                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            {{-- Навигация (Back link) --}}
+            <div class="mb-8">
+                <a href="{{ route('tracks.show', $track) }}" class="inline-flex items-center gap-2 text-[18px] text-black/50 hover:text-black transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
-                    {{ __('Назад к упражнениям трека') }}
+                    {{ __('Назад к треку') }}
                 </a>
             </div>
 
-            {{-- Header --}}
-            <div class="mb-6 md:mb-8">
-                <div class="rounded-[20px] border-2 border-black bg-white">
-                    <div class="px-6 md:px-10 py-6 md:py-7">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-4 h-4 text-black/50 -rotate-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                            <h1 class="flex-1 text-[28px] md:text-[34px] leading-tight text-black/90 truncate">{{ __('Создать упражнение') }} — "{{ $track->name }}"</h1>
-                        </div>
-                    </div>
-                </div>
+            {{-- Заголовок страницы --}}
+            <div class="mb-12">
+                <h1 class="text-[48px] font-normal text-black leading-tight">
+                    {{ __('Создать упражнение') }}
+                </h1>
+                <p class="text-[20px] text-black/40 mt-2">Трек: {{ $track->name }}</p>
             </div>
 
-            {{-- Errors --}}
+            {{-- Ошибки валидации --}}
             @if ($errors->any())
-                <div class="mb-6 p-4 border-2 border-black rounded-[14px] bg-white text-red-700">
-                    <div class="font-semibold mb-2">{{ __('Обнаружены ошибки:') }}</div>
-                    <ul class="list-disc pl-5">
+                <div class="mb-10 p-6 border-2 border-black rounded-[30px] bg-red-50">
+                    <div class="text-[20px] font-medium text-red-600 mb-2">{{ __('Пожалуйста, исправьте ошибки:') }}</div>
+                    <ul class="list-disc pl-5 text-red-600/80">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -38,49 +34,63 @@
                 </div>
             @endif
 
-            {{-- Form --}}
-            <div class="rounded-[20px] border-2 border-black bg-white">
-                <form method="POST" action="{{ route('exercises.store', $track) }}">
-                    @csrf
-                    <div class="p-6 md:p-8">
-                        <div class="mb-6">
-                            <label for="title" class="block text-base text-black/80 mb-2">{{ __('Название упражнения') }}</label>
-                            <input type="text" name="title" id="title" value="{{ old('title') }}" class="w-full h-11 px-3 border-2 border-black rounded-[16px] focus:outline-none focus:ring-0 @error('title') border-red-500 @enderror" required>
-                            @error('title')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+            {{-- Основная форма --}}
+            <form method="POST" action="{{ route('exercises.store', $track) }}" class="space-y-10">
+                @csrf
 
-                        <div id="questions" class="space-y-6">
-                            @php
-                                $questions = old('questions', []);
-                                $answers = old('answers', []);
-                                $questionCount = max(count($questions), 1);
-                            @endphp
-                            @for ($i = 0; $i < $questionCount; $i++)
-                                <div class="question p-6 bg-gray-50 rounded-[14px] border border-gray-300">
-                                    <label for="question_{{ $i }}" class="block text-base text-black/80 mb-2">{{ __('Вопрос') }} {{ $i + 1 }}</label>
-                                    <input type="text" name="questions[{{ $i }}]" id="question_{{ $i }}" value="{{ $questions[$i] ?? '' }}" class="w-full h-11 px-3 border-2 border-black rounded-[16px] focus:outline-none focus:ring-0 @error('questions.'.$i) border-red-500 @enderror" required>
-                                    @error('questions.'.$i)
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
+                {{-- Поле: Название --}}
+                <div class="bg-white border border-black rounded-[30px] p-8">
+                    <label for="title" class="block text-[24px] font-medium mb-4">{{ __('Название упражнения') }}</label>
+                    <input type="text" name="title" id="title" value="{{ old('title') }}"
+                           placeholder="Например: Тест по генетике"
+                           class="w-full h-[60px] px-8 border border-black rounded-full text-[20px] focus:ring-0 focus:border-black placeholder-black/30 @error('title') border-red-500 @enderror"
+                           required>
+                </div>
 
-                                    <label for="answer_{{ $i }}" class="block text-base text-black/80 mt-4 mb-2">{{ __('Правильный ответ') }}</label>
-                                    <input type="text" name="answers[{{ $i }}]" id="answer_{{ $i }}" value="{{ $answers[$i] ?? '' }}" class="w-full h-11 px-3 border-2 border-black rounded-[16px] focus:outline-none focus:ring-0 @error('answers.'.$i) border-red-500 @enderror" required>
-                                    @error('answers.'.$i)
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
+                {{-- Секция вопросов --}}
+                <div id="questions" class="space-y-6">
+                    <h2 class="text-[24px] font-medium px-4">{{ __('Вопросы') }}</h2>
+
+                    @php
+                        $questions = old('questions', []);
+                        $answers = old('answers', []);
+                        $questionCount = max(count($questions), 1);
+                    @endphp
+
+                    @for ($i = 0; $i < $questionCount; $i++)
+                        <div class="question bg-[#F9F9F9] border border-black rounded-[30px] p-8 relative group">
+                            <div class="grid gap-6">
+                                <div>
+                                    <label class="block text-[18px] text-black/50 mb-2 uppercase tracking-wide">{{ __('Вопрос') }} {{ $i + 1 }}</label>
+                                    <input type="text" name="questions[{{ $i }}]" value="{{ $questions[$i] ?? '' }}"
+                                           class="w-full h-[55px] px-6 border border-black rounded-[20px] text-[18px] focus:ring-0 focus:border-black"
+                                           required>
                                 </div>
-                            @endfor
-                        </div>
 
-                        <div class="mt-8 flex flex-col sm:flex-row justify-end gap-3">
-                            <button type="button" id="add-question-button" class="h-10 px-4 rounded-[12px] border-2 border-black bg-white hover:bg-black hover:text-white text-sm">{{ __('Добавить вопрос') }}</button>
-                            <button type="submit" class="h-10 px-4 rounded-[12px] border-2 border-black bg-black text-white text-sm hover:opacity-90">{{ __('Сохранить упражнение') }}</button>
+                                <div>
+                                    <label class="block text-[18px] text-black/50 mb-2 uppercase tracking-wide">{{ __('Правильный ответ') }}</label>
+                                    <input type="text" name="answers[{{ $i }}]" value="{{ $answers[$i] ?? '' }}"
+                                           class="w-full h-[55px] px-6 border border-black rounded-[20px] text-[18px] focus:ring-0 focus:border-black"
+                                           required>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
+                    @endfor
+                </div>
+
+                {{-- Кнопки действий --}}
+                <div class="flex flex-col sm:flex-row items-center gap-4 pt-6">
+                    <button type="button" id="add-question-button"
+                            class="w-full sm:w-auto h-[60px] px-10 border border-black rounded-full text-[20px] hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                        <span>+</span> {{ __('Добавить вопрос') }}
+                    </button>
+
+                    <button type="submit"
+                            class="w-full sm:w-auto h-[60px] px-10 bg-black text-white border border-black rounded-full text-[20px] hover:bg-black/90 transition-all flex items-center justify-center">
+                        {{ __('Сохранить упражнение') }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 @endsection

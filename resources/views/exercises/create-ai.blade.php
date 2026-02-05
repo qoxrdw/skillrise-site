@@ -1,72 +1,47 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="py-6 md:py-10">
-        <div class="max-w-6xl mx-auto px-4">
+    <div class="min-h-screen bg-white px-8 pt-8 pb-20 font-sans">
+        <div class="max-w-[1000px]">
 
-            {{-- Back link --}}
-            <div class="mb-4 md:mb-6">
-                <a href="{{ route('exercises.index', $track) }}"
-                   class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition">
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                        <path fill-rule="evenodd"
-                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1
-                             0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1
-                             0 011.414 0z"/>
+            {{-- Навигация --}}
+            <div class="mb-8">
+                <a href="{{ route('tracks.show', $track) }}" class="inline-flex items-center gap-2 text-[18px] text-black/50 hover:text-black transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
-                    {{ __('Назад к упражнениям трека') }}
+                    {{ __('Назад к треку') }}
                 </a>
             </div>
 
+            {{-- Заголовок страницы (Стиль как синий бокс, но с AI акцентом) --}}
+            <div class="mb-12 bg-black text-white border border-black rounded-[30px] p-10 relative overflow-hidden">
+                {{-- Декоративный эффект нейросети на фоне --}}
+                <div class="absolute top-0 right-0 opacity-20 pointer-events-none">
+                    <svg width="400" height="400" viewBox="0 0 400 400" fill="none">
+                        <circle cx="400" cy="0" r="300" stroke="white" stroke-width="1" stroke-dasharray="10 10"/>
+                        <circle cx="400" cy="0" r="200" stroke="white" stroke-width="1" stroke-dasharray="5 5"/>
+                    </svg>
+                </div>
 
-            {{-- HERO HEADER (в стиле index.blade / tracks/show) --}}
-            <div class="mb-8 md:mb-10">
-                <div class="relative rounded-[24px] border border-gray-200 bg-gradient-to-br
-                        from-purple-50 via-blue-50 to-cyan-50 overflow-hidden shadow-lg">
-
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br
-                            from-purple-200/40 to-transparent rounded-full blur-3xl"></div>
-
-                    <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr
-                            from-blue-200/40 to-transparent rounded-full blur-2xl"></div>
-
-                    <div class="relative px-6 md:px-10 py-8 md:py-10">
-                        <div class="flex items-center gap-4">
-
-                            {{-- AI ICON --}}
-                            <div class="flex-shrink-0 w-14 h-14 rounded-2xl
-                                    bg-gradient-to-br from-indigo-500 to-blue-600
-                                    flex items-center justify-center shadow-lg">
-                                <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M13 7H7v6h6V7z"/>
-                                    <path fill-rule="evenodd"
-                                          d="M7 2a1 1 0 112 0v1h2V2a1 1 0 112 0v1h2a2 2
-                                         0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1
-                                         0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1
-                                         0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2
-                                         0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1
-                                         0 010-2h1V5a2 2 0 012-2h2V2z
-                                         M5 5h10v10H5V5z"
-                                          clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-
-                            <h1 class="text-[32px] md:text-[40px] font-bold leading-tight
-                                   bg-gradient-to-r from-gray-900 via-purple-900 to-blue-900
-                                   bg-clip-text text-transparent">
-                                {{ __('Создать упражнение с AI') }}
-                            </h1>
-                        </div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="px-3 py-1 border border-white/30 rounded-full text-[12px] uppercase tracking-[0.2em]">AI Generation</span>
+                        <span class="text-white/40 text-[12px] uppercase tracking-[0.2em]">Pro Feature</span>
                     </div>
+                    <h1 class="text-[48px] font-normal leading-tight mb-4">
+                        Создание упражнение <br> с помощью искуственного интеллекта
+                    </h1>
+                    <p class="text-[18px] text-white/60 max-w-[600px] font-light italic">
+                        Выберите одну из ваших заметок. AI проанализирует контекст и составит проверочные вопросы для закрепления материала.
+                    </p>
                 </div>
             </div>
 
-
-            {{-- ERRORS --}}
+            {{-- Ошибки --}}
             @if ($errors->any())
-                <div class="mb-6 p-5 rounded-2xl border border-red-200 bg-red-50 shadow-sm">
-                    <div class="font-semibold text-red-700 mb-2">{{ __('Обнаружены ошибки:') }}</div>
-                    <ul class="list-disc pl-5 text-red-600">
+                <div class="mb-8 p-6 rounded-[25px] border border-red-500 bg-red-50 text-red-700">
+                    <ul class="list-disc pl-5">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -74,134 +49,101 @@
                 </div>
             @endif
 
+            {{-- Форма выбора заметки --}}
+            <form method="POST" action="{{ route('exercises.generate-ai', $track) }}" id="ai-form">
+                @csrf
 
-            {{-- INFO BOX (обновлённый стиль) --}}
-            <div class="mb-8 p-6 rounded-2xl border border-blue-100 shadow-sm
-                    bg-gradient-to-br from-blue-50 to-purple-50">
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">
-                    💡 {{ __('Как это работает?') }}
-                </h2>
-                <p class="text-gray-700 mb-2">
-                    {{ __('AI проанализирует выбранную заметку и создаст упражнение с вопросами и ответами.') }}
-                </p>
-                <p class="text-sm text-gray-600">
-                    {{ __('Выберите заметку ниже — и упражнение будет сгенерировано за несколько секунд!') }}
-                </p>
-            </div>
+                <div class="mb-10">
+                    <h2 class="text-[24px] font-normal mb-8">{{ __('Выберите источник:') }}</h2>
 
+                    @if($notes->isEmpty())
+                        <div class="p-12 text-center rounded-[30px] border border-black border-dashed">
+                            <p class="text-[18px] text-black/40 mb-6 italic">{{ __('В этом треке пока нет заметок для анализа.') }}</p>
+                            <a href="{{ route('notes.create', $track) }}" class="h-[55px] px-8 border border-black rounded-full inline-flex items-center hover:bg-black hover:text-white transition-all">
+                                {{ __('Создать первую заметку') }}
+                            </a>
+                        </div>
+                    @else
+                        <div class="grid gap-4">
+                            @foreach($notes as $note)
+                                <label class="relative group cursor-pointer">
+                                    <input type="radio" name="note_id" value="{{ $note->id }}" class="peer hidden" required>
 
-            {{-- FORM --}}
-            <div class="rounded-[24px] border border-gray-200 bg-white shadow-md">
-                <form method="POST" action="{{ route('exercises.generate-ai', $track) }}" id="ai-form">
-                    @csrf
+                                    <div class="flex items-center justify-between p-6 border border-black rounded-[25px] bg-white transition-all
+                                                peer-checked:bg-[#F0F7FF] peer-checked:border-blue-500 peer-checked:ring-1 peer-checked:ring-blue-500
+                                                group-hover:bg-gray-50">
 
-                    <div class="p-6 md:p-8">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">
-                            {{ __('Выберите заметку для создания упражнения') }}
-                        </h2>
-
-                        {{-- CASE: no notes --}}
-                        @if($notes->isEmpty())
-                            <div class="p-8 text-center rounded-2xl border border-dashed border-gray-300 bg-gray-50">
-                                <p class="text-gray-700 mb-4">{{ __('У вас пока нет заметок в этом треке.') }}</p>
-                                <a href="{{ route('notes.create', $track) }}"
-                                   class="inline-flex items-center h-10 px-4 rounded-xl
-                                      bg-blue-100 text-blue-700 border border-blue-200
-                                      hover:bg-blue-200 transition font-medium">
-                                    {{ __('Создать заметку') }}
-                                </a>
-                            </div>
-
-                        @else
-
-                            {{-- RADIO-CARD LIST (в стиле карточек A) --}}
-                            <div class="space-y-3">
-                                @foreach($notes as $note)
-                                    <label class="block rounded-2xl border border-gray-200 bg-white p-5
-                                              hover:border-blue-300 hover:shadow-lg cursor-pointer transition">
-
-                                        <div class="flex items-start gap-4">
-                                            <input type="radio" name="note_id" value="{{ $note->id }}"
-                                                   class="mt-1 h-5 w-5 text-blue-600 focus:ring-blue-500" required>
-
-                                            <div class="flex-1">
-                                                <div class="text-[18px] text-gray-900 mb-1 font-medium">
-                                                    @if($note->type === 'handwriting')
-                                                        {{ $note->getFirstLine() ?: __('Рукописная заметка') }}
-                                                    @elseif($note->type === 'voice')
-                                                        {{ __('Голосовая заметка') }}
-                                                    @else
-                                                        📝 {{ $note->getFirstLine() ?: __('(Без названия)') }}
-                                                    @endif
+                                        <div class="flex items-center gap-6">
+                                            {{-- Кастомный индикатор радиокнопки --}}
+                                            <div>
+                                                <div class="text-[20px] text-black mb-1">
+                                                    @php
+                                                        $icons = ['text' => '📝', 'voice' => '🎙️', 'handwriting' => '🎨'];
+                                                        echo ($icons[$note->type] ?? '📄') . ' ' . ($note->getFirstLine() ?: 'Без названия');
+                                                    @endphp
                                                 </div>
-
-                                                <div class="text-sm text-gray-500">
-                                                    {{ $note->created_at->isoFormat('LL') }}
+                                                <div class="text-[14px] text-black/40 uppercase tracking-widest">
+                                                    {{ $note->type }} • {{ $note->created_at->isoFormat('LL') }}
                                                 </div>
                                             </div>
                                         </div>
 
-                                    </label>
-                                @endforeach
-                            </div>
+                                        {{-- Метка типа заметки --}}
+                                        <div class="hidden sm:block text-[12px] font-medium text-black/30 border border-black/10 rounded-lg px-3 py-1 group-hover:border-black/30 transition-colors">
+                                            SELECT SOURCE
+                                        </div>
+                                    </div>
+                                </label>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
 
-                            {{-- BUTTONS --}}
-                            <div class="mt-8 flex flex-col sm:flex-row justify-end gap-3">
-                                <a href="{{ route('exercises.index', $track) }}"
-                                   class="h-10 px-4 rounded-xl border border-gray-300 bg-white
-                                      text-gray-700 hover:bg-gray-900 hover:text-white
-                                      text-sm font-medium flex items-center justify-center">
-                                    {{ __('Отмена') }}
-                                </a>
+                {{-- Кнопки действий --}}
+                <div class="flex items-center justify-end gap-4 border-t border-black/5 pt-10">
+                    <a href="{{ route('exercises.index', $track) }}"
+                       class="h-[65px] px-10 rounded-full text-[18px] text-black/50 hover:text-black hover:bg-gray-50 flex items-center justify-center transition-all">
+                        {{ __('Отмена') }}
+                    </a>
 
-                                <button type="submit" id="submit-btn"
-                                        class="h-10 px-4 rounded-xl bg-gradient-to-r
-                                           from-purple-600 via-blue-600 to-cyan-600
-                                           text-white border border-transparent
-                                           text-sm font-medium flex items-center
-                                           justify-center shadow-md hover:shadow-lg transition">
-                                    <span id="btn-text">{{ __('Сгенерировать упражнение') }}</span>
+                    <button type="submit" id="submit-btn"
+                            class="h-[65px] px-12 bg-black text-white rounded-full text-[20px] flex items-center justify-center gap-3 hover:bg-black/90 transition-all shadow-xl group disabled:opacity-50">
+                        <span id="btn-text" class="flex items-center gap-3">
+                            {{ __('Сгенерировать') }}
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </span>
 
-                                    {{-- spinner --}}
-                                    <span id="btn-loading" class="hidden ml-2">
-                                    <svg class="animate-spin h-5 w-5 text-white"
-                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                              d="M4 12a8 8 0 018-8V0C5.373
-                                                 0 0 5.373 0 12h4zm2
-                                                 5.291A7.962 7.962 0 014 12H0c0
-                                                 3.042 1.135 5.824 3
-                                                 7.938l3-2.647z"></path>
-                                    </svg>
-                                </span>
-                                </button>
-                            </div>
-
-                        @endif
-                    </div>
-                </form>
-            </div>
-
+                        {{-- Лоадер (скрыт по умолчанию) --}}
+                        <div id="btn-loading" class="hidden items-center gap-3">
+                            <svg class="animate-spin h-6 w-6 text-white" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>{{ __('Нейросеть думает...') }}</span>
+                        </div>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 @endsection
 
-
 @section('scripts')
     <script>
-        const form = document.getElementById('ai-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const btnText = document.getElementById('btn-text');
-        const btnLoading = document.getElementById('btn-loading');
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('ai-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
 
-        if (form) {
-            form.addEventListener('submit', () => {
-                submitBtn.disabled = true;
-                btnText.classList.add('hidden');
-                btnLoading.classList.remove('hidden');
-            });
-        }
+            if (form) {
+                form.addEventListener('submit', () => {
+                    submitBtn.disabled = true;
+                    btnText.classList.add('hidden');
+                    btnLoading.classList.remove('hidden');
+                    btnLoading.classList.add('flex');
+                });
+            }
+        });
     </script>
 @endsection

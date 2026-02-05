@@ -128,7 +128,7 @@ class ExercisesController extends Controller
         Log::info('Exercise successfully created via AI.', ['exercise_id' => $exercise->id]);
 
 
-        return redirect()->route('exercises.index', $track)
+        return redirect()->route('tracks.show', $track)
             ->with('success', 'Упражнение успешно создано с помощью AI! 🤖');
     }
 
@@ -174,7 +174,7 @@ class ExercisesController extends Controller
 
             Log::info('Exercise created', ['exercise' => $exercise]);
 
-            return redirect()->route('exercises.index', $track)->with('success', 'Упражнение успешно создано.');
+            return redirect()->route('tracks.show', $track)->with('success', 'Упражнение успешно создано.');
         } catch (\Exception $e) {
             Log::error('Error creating exercise', ['error' => $e->getMessage()]);
             return back()->withErrors(['error' => 'Произошла ошибка при создании упражнения.'])->withInput();
@@ -225,6 +225,6 @@ class ExercisesController extends Controller
             abort(403);
         }
         $exercise->delete();
-        return redirect()->route('exercises.index', $track)->with('success', 'Упражнение успешно удалено.');
+        return redirect()->route('tracks.show', $track)->with('success', 'Упражнение успешно удалено.');
     }
 }

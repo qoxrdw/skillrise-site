@@ -21,15 +21,20 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/notifications', function () {
+    return view('notifications.index');
+})->name('notifications.index');
+
 Route::get('/tracks/sharing', [TrackSharingController::class, 'index'])->name('tracks.sharing');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/tracks', [TracksController::class, 'index'])->name('tracks.index');
     Route::post('/tracks', [TracksController::class, 'store'])->name('tracks.store');
+
     Route::get('/tracks/{track}', [TracksController::class, 'show'])->name('tracks.show');
     Route::patch('/tracks/{track}', [TracksController::class, 'update'])->name('tracks.update');
     Route::post('/tracks/{track}/clone', [TracksController::class, 'cloneTrack'])->name('tracks.clone');
-    Route::post('/tracks/{track}/share', [TracksController::class, 'share'])->name('tracks.share');
+    Route::patch('/tracks/{track}/toggle-publish', [TracksController::class, 'togglePublish'])->name('tracks.toggle-publish');
     Route::post('/tracks/{track}/unshare', [TracksController::class, 'unshare'])->name('tracks.unshare');
     Route::delete('/tracks/{track}', [TracksController::class, 'destroy'])->name('tracks.destroy'); // Новый маршрут для удаления
 

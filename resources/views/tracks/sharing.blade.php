@@ -1,77 +1,96 @@
 @extends('layouts.app')
 
 @section('content')
+    <div class="min-h-screen bg-white px-8 pt-8 pb-20 font-sans">
+        <div class="max-w-[1000px]">
 
-    {{-- Главный контейнер. Используем flex для центрирования и вертикального потока. --}}
-    <div class="flex justify-center min-h-screen bg-white pt-10 pb-20">
-
-        {{-- Основной контент (Максимальная ширина 960px) --}}
-        <div class="w-full max-w-[960px] px-4 space-y-8">
-
-            {{-- Сообщения об успехе/ошибке --}}
-            @if (session('success'))
-                <div class="p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg shadow-sm">
-                    {{ session('success') }}
+            {{-- Заголовок страницы (Стиль как в синем боксе, но белый) --}}
+            <div class="mb-12 bg-white border border-black rounded-[30px] p-10 relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="text-[16px] font-medium text-black/40 uppercase tracking-widest mb-3">
+                        {{ __('Community Library') }}
+                    </div>
+                    <h1 class="text-[48px] font-normal text-black leading-tight mb-4">
+                        {{ __('Общедоступные треки') }}
+                    </h1>
+                    <p class="text-[20px] text-black/50 max-w-[600px] font-light">
+                        {{ __('Коллекция учебных программ, созданных другими пользователями. Вы можете добавить любой трек в свою библиотеку.') }}
+                    </p>
                 </div>
-            @endif
-
-            {{-- Заголовок страницы --}}
-            <div class="w-full py-4">
-                <h1 class="text-[34px] leading-tight text-black/90 font-normal">{{ __('Общедоступные треки') }}</h1>
-                <p class="mt-1 text-base text-black/60">{{ __('Откройте для себя треки других пользователей и добавьте их к себе') }}</p>
             </div>
 
-            {{-- Поисковая строка --}}
-            <div class="w-full">
-                <form method="GET" action="{{ route('tracks.sharing') }}" class="relative">
+            {{-- Поисковая строка (в стиле вашей главной/show) --}}
+            <div class="mb-12">
+                <form method="GET" action="{{ route('tracks.sharing') }}" class="relative max-w-[600px]">
+                    <span class="absolute left-6 top-1/2 -translate-y-1/2 opacity-40">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </span>
                     <input type="text"
                            name="q"
                            value="{{ request('q') }}"
-                           placeholder="Поиск общедоступных треков"
-                           class="w-full h-[61px] px-6 text-[30px] leading-[35px] border-2 border-black rounded-[30px] outline-none focus:ring-0 placeholder-black/40 font-normal">
-                    <button type="submit" class="absolute right-6 top-1/2 -translate-y-1/2">
-                        {{-- SVG-иконка поиска --}}
-                        <svg width="33" height="36" viewBox="0 0 33 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g opacity="0.6">
-                                <path d="M9.17174 6.86766C14.2884 2.99212 21.5916 3.88454 25.6185 8.93051C29.7087 14.0564 28.8695 21.5273 23.744 25.618C18.6181 29.7085 11.1465 28.8698 7.05575 23.7441L6.86754 23.502C2.9921 18.3853 3.88445 11.0821 8.93039 7.05527L9.17174 6.86766ZM10.2982 8.77238C6.12084 12.1071 5.43747 18.1967 8.77165 22.3748L8.92988 22.5683L9.24729 22.9285C12.6048 26.5474 18.2013 27.0672 22.1774 24.0557L22.1766 24.0563L22.374 23.9013C26.4867 20.6189 27.2146 14.6677 24.0562 10.4971L23.9026 10.2998L23.587 9.92322C20.2498 6.14451 14.5372 5.55778 10.497 8.61752L10.4963 8.61675L10.2982 8.77238Z" fill="black" stroke="black" stroke-width="0.5" stroke-linecap="round"/>
-                                <path d="M22.1403 27.2185C21.4307 26.399 21.5198 25.1594 22.3393 24.4498V24.4498C23.1588 23.7402 24.3984 23.8292 25.108 24.6488L31.427 31.9464C32.1366 32.7659 32.0475 34.0055 31.228 34.7151V34.7151C30.4085 35.4247 29.1689 35.3356 28.4593 34.5161L22.1403 27.2185Z" fill="black"/>
-                            </g>
-                        </svg>
-                    </button>
+                           placeholder="Поиск по названию трека..."
+                           class="w-full h-[65px] pl-16 pr-8 border border-black rounded-full text-[22px] focus:ring-0 focus:border-black placeholder-black/30 transition-all">
                 </form>
             </div>
 
+            {{-- Сообщения об успехе --}}
+            @if (session('success'))
+                <div class="mb-8 p-6 bg-green-50 border border-black rounded-[25px] text-green-800 flex items-center gap-3">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                    <span class="text-[18px]">{{ session('success') }}</span>
+                </div>
+            @endif
+
             {{-- Список треков --}}
             @if($tracks->isEmpty())
-                <div class="w-full h-[112px] text-center p-10 bg-white rounded-[30px] border-2 border-dashed border-gray-300 flex flex-col items-center justify-center">
-                    <h3 class="mt-2 text-xl font-medium text-gray-900">{{ __('Пока нет доступных треков для шеринга') }}</h3>
-                    <p class="mt-1 text-sm text-gray-500">{{ __('Возможно, вы станете первым, кто поделится своим треком!') }}</p>
+                <div class="h-[300px] border border-black border-dashed rounded-[30px] flex flex-col items-center justify-center text-black/30">
+                    <span class="text-5xl mb-4">🔍</span>
+                    <p class="text-[22px] italic">{{ __('Треков по вашему запросу не найдено') }}</p>
                 </div>
             @else
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4"> {{-- Используем две колонки для компактности --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach ($tracks as $track)
                         @if ($track->user)
-                            {{-- Дизайн карточки трека --}}
-                            <div class="group h-[160px] rounded-[30px] border-2 border-black bg-white p-6 transition-transform hover:shadow-lg flex flex-col justify-between">
-                                <div class="flex items-start justify-between gap-4">
+                            <div class="group border border-black rounded-[30px] p-8 flex flex-col justify-between hover:bg-gray-50 transition-all min-h-[240px]">
+                                <div>
+                                    <div class="flex items-center justify-between mb-6">
+                                        {{-- Автор трека --}}
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[14px] text-black/40 uppercase tracking-widest">{{ $track->user->name }}</span>
+                                        </div>
+
+                                        {{-- Статистика справа под ID --}}
+                                        <div class="text-right">
+                                            <div class="text-[12px] text-black/30 font-medium mb-1">
+                                                ID: #{{ $track->id }}
+                                            </div>
+                                            <div class="text-[11px] text-black/40 uppercase tracking-tighter space-y-0.5">
+                                                <div class="flex items-center justify-end gap-1">
+                                                    <span>{{ $track->notes_count ?? $track->notes->count() }} заметок</span>
+                                                </div>
+                                                <div class="flex items-center justify-end gap-1">
+                                                    <span>{{ $track->exercises_count ?? $track->exercises->count() }} упражнений</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {{-- Название трека --}}
-                                    <h3 class="text-[26px] leading-8 font-normal text-black/90 line-clamp-2 pr-4">{{ $track->name }}</h3>
-
-                                    {{-- Автор трека --}}
-                                    <span class="px-3 h-8 rounded-[20px] border-2 border-black text-sm bg-white flex-shrink-0 flex items-center justify-center text-black/80 font-normal" title="{{ __('Автор') }}">
-                                        {{ $track->user->name }}
-                                    </span>
+                                    <h3 class="text-[28px] leading-tight font-normal text-black line-clamp-2 mb-8 group-hover:underline">
+                                        {{ $track->name }}
+                                    </h3>
                                 </div>
 
-                                {{-- Кнопка "Добавить трек" --}}
-                                <div class="mt-4">
-                                    <form action="{{ route('tracks.clone', $track) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="w-full h-[48px] px-5 rounded-[20px] border-2 border-black bg-black text-white text-lg transition-all hover:bg-white hover:text-black">
-                                            {{ __('Добавить трек') }}
-                                        </button>
-                                    </form>
-                                </div>
+                                {{-- Кнопка "Добавить к себе" --}}
+                                <form action="{{ route('tracks.clone', $track) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="h-[55px] px-8 rounded-full border border-black bg-white text-black text-[18px] font-medium transition-all hover:bg-black hover:text-white flex items-center justify-center gap-3 w-full sm:w-auto">
+                                        {{ __('Добавить в библиотеку') }}
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                                    </button>
+                                </form>
                             </div>
                         @endif
                     @endforeach

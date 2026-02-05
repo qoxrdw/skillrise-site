@@ -1,17 +1,33 @@
 document.addEventListener('DOMContentLoaded', function () {
     let questionCount = document.querySelectorAll('.question').length;
     const addQuestionButton = document.getElementById('add-question-button');
+
     if (addQuestionButton) {
         addQuestionButton.addEventListener('click', function () {
             const questionsDiv = document.getElementById('questions');
             const newQuestion = document.createElement('div');
-            newQuestion.classList.add('question', 'mb-4');
+
+            // Добавляем те же классы, что и в основном шаблоне
+            newQuestion.classList.add('question', 'bg-[#F9F9F9]', 'border', 'border-black', 'rounded-[30px]', 'p-8', 'relative');
+
             newQuestion.innerHTML = `
-                <label for="question_${questionCount}" class="block text-gray-700 font-semibold mb-2">Вопрос ${questionCount + 1}</label>
-                <input type="text" name="questions[${questionCount}]" id="question_${questionCount}" class="w-full p-2 border rounded" required>
-                <label for="answer_${questionCount}" class="block text-gray-700 font-semibold mt-2 mb-2">Правильный ответ</label>
-                <input type="text" name="answers[${questionCount}]" id="answer_${questionCount}" class="w-full p-2 border rounded" required>
+                <div class="grid gap-6">
+                    <div>
+                        <label class="block text-[18px] text-black/50 mb-2 uppercase tracking-wide">Вопрос ${questionCount + 1}</label>
+                        <input type="text" name="questions[${questionCount}]"
+                               class="w-full h-[55px] px-6 border border-black rounded-[20px] text-[18px] focus:ring-0 focus:border-black"
+                               required>
+                    </div>
+
+                    <div>
+                        <label class="block text-[18px] text-black/50 mb-2 uppercase tracking-wide">Правильный ответ</label>
+                        <input type="text" name="answers[${questionCount}]"
+                               class="w-full h-[55px] px-6 border border-black rounded-[20px] text-[18px] focus:ring-0 focus:border-black"
+                               required>
+                    </div>
+                </div>
             `;
+
             questionsDiv.appendChild(newQuestion);
             questionCount++;
         });
