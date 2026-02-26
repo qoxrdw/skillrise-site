@@ -176,7 +176,9 @@
                                     <a href="{{ route('notes.edit', ['track' => $track->id, 'note' => $track->notes[$i]->id]) }}"
                                        class="flex h-[85px] border border-black rounded-[25px] items-center justify-between px-8 hover:bg-gray-50 transition-colors cursor-pointer">
                                         <div>
-                                            <div class="text-[20px] text-black group-hover:underline">{{ $track->notes[$i]->getFirstLine() }}</div>
+                                            <div class="text-[20px] text-black group-hover:underline">
+                                                {{ $track->notes[$i]->title ?? 'Без названия' }}
+                                            </div>
                                             <div class="flex items-center gap-6 mt-1 text-black/50 text-[14px]">
                                     <span class="flex items-center gap-1 italic">
                                         @php

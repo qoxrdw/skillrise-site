@@ -6,7 +6,13 @@ use Illuminate\Support\Facades\Log;
 
 class Note extends Model
 {
-    protected $fillable = ['content', 'track_id', 'type'];
+    protected $fillable = [
+        'track_id',
+        'title',   // ДОБАВЬТЕ ЭТО
+        'content',
+        'type',
+        'preview_path' // если вы добавили превью ранее
+    ];
 
     public function track()
     {

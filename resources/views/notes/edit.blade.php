@@ -1,156 +1,89 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- Основной контейнер с белым фоном и вертикальным отступом --}}
-    {{-- Добавлен bg-white для соответствия фону формы --}}
-    <div class="py-12 bg-white">
-        {{-- Контейнер для контента с автоматическими горизонтальными отступами для центрирования --}}
-        {{-- Убрана фиксированная максимальная ширина и скорректированы горизонтальные отступы для контроля ширины --}}
-        {{-- Увеличены горизонтальные отступы для уменьшения ширины формы (~50%) --}}
-        <div class="mx-auto sm:px-24 lg:px-80"> {{-- Горизонтальные отступы увеличены для сужения формы --}}
+    <div class="fixed inset-0 bg-[#F0F0F0] z-50 flex flex-col font-sans overflow-hidden">
 
-            {{-- Хлебные крошки или ссылка "Назад" --}}
-            <div class="mb-6">
-                <a href="{{ route('tracks.show', $track) }}" class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors duration-300">
-                    {{-- Иконка стрелки назад --}}
-                    <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    {{ __('Назад к треку: ') }} {{ $track->name }}
+        {{-- Header --}}
+        <div class="h-[70px] bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0 z-30 shadow-sm">
+            <div class="flex items-center gap-6">
+                <a href="{{ route('tracks.show', $track) }}" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 </a>
+                <div class="h-6 w-[1px] bg-gray-200"></div>
+                <h1 class="text-[14px] font-bold uppercase tracking-widest text-black/40">{{ $track->name }} / {{ __('Редактирование') }}</h1>
             </div>
 
-            {{-- Заголовок страницы --}}
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">
-                {{ __('Редактировать заметку в треке:') }} <span class="text-indigo-600">{{ $track->name }}</span>
-            </h1>
+            <div class="flex items-center gap-4">
+                <a href="{{ route('tracks.show', $track) }}" class="text-sm font-medium text-gray-400 hover:text-black transition-colors">
+                    {{ __('Отмена') }}
+                </a>
+                <button type="submit" form="note-form" class="bg-black text-white px-8 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-all shadow-md">
+                    {{ __('Обновить') }}
+                </button>
+            </div>
+        </div>
 
-            {{-- Сообщения сессии (обработка ошибок) --}}
-            @if ($errors->any())
-                <div class="mb-6 p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg shadow-sm">
-                    <div class="font-semibold mb-2">{{ __('Обнаружены ошибки:') }}</div>
-                    <ul class="list-disc pl-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            {{-- Форма редактирования заметки --}}
-            {{-- Убраны классы, отвечающие за внешнюю рамку и тень формы --}}
-            <div class="bg-white"> {{-- Этот div уже имеет bg-white --}}
+        {{-- Scrollable Area --}}
+        <div class="flex-1 overflow-y-auto pt-10 pb-20">
+            {{-- Ширина max-w-7xl --}}
+            <main class="max-w-7xl mx-auto px-6">
                 <form id="note-form" method="POST" action="{{ route('notes.update', [$track, $note]) }}">
                     @csrf
-                    @method('PATCH') {{-- Метод для обновления --}}
-                    <div class="p-6 sm:p-8">
-                        {{-- Контейнер редактора Quill --}}
-                        {{-- Убраны классы рамки и фокуса из родительского div --}}
-                        <div class="mb-6">
-                            {{-- Сам редактор Quill --}}
-                            {{-- Добавлены inline стили для удаления рамки Quill и установлена минимальная высота --}}
-                            {{-- Убрана фиксированная высота, используется min-height для адаптивности --}}
-                            <div id="editor" style="min-height: 70vh; border: none !important;" class="bg-white">
-                                {{-- Quill будет инициализирован здесь с $note->content вашим JS --}}
-                            </div>
-                        </div>
-                        {{-- Скрытое поле для сохранения содержимого Quill --}}
-                        {{-- Значение для этого скрытого поля будет установлено вашим JS (notes-edit.js) --}}
-                        {{-- Важно, чтобы это значение правильно передавалось из объекта $note в Quill, а затем в это поле при отправке --}}
-                        <input type="hidden" name="content" id="content" value="{{ old('content', $note->content) }}">
+                    @method('PATCH')
 
-
-                        {{-- Кнопки действий --}}
-                        <div class="mt-8 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
-                            {{-- Кнопка "Отмена" --}}
-                            <a href="{{ route('tracks.show', $track) }}"
-                               class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-sm font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150">
-                                {{ __('Отмена') }}
-                            </a>
-                            {{-- Кнопка "Сохранить изменения" --}}
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150">
-                                {{-- Иконка сохранения --}}
-                                <svg class="w-5 h-5 mr-2 -ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                    <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
-                                </svg>
-                                {{ __('Сохранить изменения') }}
-                            </button>
-                        </div>
+                    <div class="mb-6">
+                        {{-- Заголовок text-3xl/4xl --}}
+                        <input type="text" name="title" value="{{ old('title', $note->title) }}" placeholder="Без названия"
+                               class="w-full text-3xl md:text-4xl font-bold border-none p-0 focus:ring-0 placeholder:text-gray-300 text-gray-900 bg-transparent tracking-tight">
                     </div>
+
+                    <div class="bg-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] rounded-lg border border-gray-200 min-h-[80vh] flex flex-col overflow-hidden">
+                        <div id="editor" class="flex-1">{!! old('content', $note->content) !!}</div>
+                    </div>
+
+                    <input type="hidden" name="content" id="content">
                 </form>
-            </div>
+            </main>
         </div>
     </div>
 @endsection
 
 @section('scripts')
-    {{-- Стили и скрипт Quill --}}
+    {{-- Скрипты и стили точно такие же, как в create выше --}}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
-
-    {{-- Пользовательский скрипт для инициализации Quill и обработки отправки формы --}}
-    {{-- Этот скрипт должен:
-        1. Инициализировать Quill в #editor.
-        2. Установить начальное содержимое Quill, используя значение из скрытого поля #content (которое содержит $note->content).
-        3. При отправке формы обновить скрытое поле #content текущим содержимым из Quill.
-    --}}
     @vite('resources/js/notes-edit.js')
 
-    {{-- Дополнительные стили для настройки внешнего вида Quill --}}
     <style>
-        /* Убираем рамку Quill редактора и контейнера */
-        .ql-toolbar.ql-snow,
-        .ql-container.ql-snow {
-            border: none !important;
-        }
+        /* Убираем дефолтные рамки */
+        .ql-toolbar.ql-snow, .ql-container.ql-snow { border: none !important; }
 
-        /* Убираем нижнюю границу у тулбара или делаем ее тонкой */
         .ql-toolbar.ql-snow {
-            border-bottom: 1px solid #e5e7eb !important; /* Оставляем тонкую линию для разделения тулбара */
+            position: sticky; top: 0; z-index: 40; background: white;
+            border-bottom: 1px solid #f0f0f0 !important; padding: 15px 50px !important;
         }
 
-        /* Настройка стилей для области редактирования */
+        /* Настройка области текста */
         .ql-editor {
-            /* padding: top right bottom left */
-            /* Увеличен отступ сверху и скорректированы боковые отступы */
-            padding: 100px 48px 24px 48px !important;
-            font-size: 1.125rem !important; /* Увеличиваем размер текста */
-            line-height: 1.75rem !important; /* Увеличиваем межстрочный интервал */
-            min-height: calc(70vh - 124px); /* Минимальная высота с учетом верхнего и нижнего padding */
+            padding: 50px 60px !important; /* Наш основной отступ */
+            font-size: 1.15rem !important;
+            line-height: 1.75 !important;
+            min-height: 70vh;
         }
 
-        /* Выравнивание плейсхолдера по вертикали */
-        .ql-editor::before {
-            top: 100px !important; /* Устанавливаем верхний отступ, равный padding-top .ql-editor */
-            left: 48px !important; /* Устанавливаем левый отступ, равный padding-left .ql-editor */
+        /* !!! ИСПРАВЛЕНИЕ ПЛЕЙСХОЛДЕРА !!! */
+        .ql-editor.ql-blank::before {
+            left: 60px !important;      /* Должно быть равно padding-left в .ql-editor */
+            right: 60px !important;     /* Для корректного переноса, если плейсхолдер длинный */
+            top: 50px !important;       /* Должно быть равно padding-top в .ql-editor */
+            font-style: normal;         /* Убираем курсив, чтобы выглядело современнее */
+            color: #d1d5db;             /* Приятный светло-серый цвет */
         }
 
-
-        /* Дополнительные стили для заголовков в редакторе, если используются */
-        .ql-editor h1 {
-            font-size: 2.25rem !important; /* Пример: text-4xl */
-            font-weight: bold !important;
-            margin-bottom: 1.5rem !important; /* Пример: mb-6 */
-        }
-
-        .ql-editor h2 {
-            font-size: 1.875rem !important; /* Пример: text-3xl */
-            font-weight: bold !important;
-            margin-bottom: 1.25rem !important; /* Пример: mb-5 */
-        }
-        /* ... добавьте стили для других элементов, если нужно (h3, h4, списки и т.д.) */
-
-        /* Существующие стили... */
-
-        /* НОВОЕ: Установка шрифта по умолчанию */
-        .ql-editor {
-            font-family: 'Work Sans', sans-serif !important;
-        }
-
-        .ql-editor p {
-            font-family: 'Work Sans', sans-serif !important;
-        }
+        /* Шрифты */
+        .ql-font-roboto { font-family: 'Roboto', sans-serif; }
+        .ql-font-montserrat { font-family: 'Montserrat', sans-serif; }
+        .ql-font-playfair { font-family: 'Playfair Display', serif; }
     </style>
 @endsection

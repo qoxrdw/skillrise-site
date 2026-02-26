@@ -113,7 +113,8 @@ class NotesController extends Controller
         try {
             // Убедитесь, что здесь всегда 'text'
             $note = $track->notes()->create([
-                'content' => $content,
+                'title' => $request->input('title') ?: 'Без названия',
+                'content' => $request->input('content'),
                 'type' => 'text'
             ]);
             if (!$note) {
@@ -197,14 +198,17 @@ class NotesController extends Controller
         $content = $request->input('content', '<p>Пустая заметка</p>');
         Log::info('Content to update', ['content' => $content]);
         $request->merge(['content' => $content]);
-        $request->validate(['content' => 'required|string']);
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'content' => 'required|string'
+        ]);
         if (trim(strip_tags($content)) === '') {
             $content = '<p>Пустая заметка</p>';
         }
         try {
             $note->update([
-                'content' => $content,
-                // 'type' => 'text' // Убедитесь, что эта строка закомментирована/удалена, если тип должен сохраняться
+                'title' => $request->input('title') ?: 'Без названия',
+                'content' => $request->input('content'),
             ]);
         } catch (\Exception $e) {
             Log::error('Exception while updating note', ['exception' => $e->getMessage()]);
