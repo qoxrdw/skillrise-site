@@ -9,7 +9,7 @@ class Exercise extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'content', 'user_id', 'track_id'];
+    protected $fillable = ['title', 'content', 'type', 'user_id', 'track_id'];
 
     protected $casts = [
         'content' => 'array', // Автоматически преобразует JSON в массив

@@ -93,14 +93,22 @@
                     @foreach($exercises as $index => $exercise)
                         <div class="group flex items-center gap-4">
                             {{-- Карточка упражнения --}}
-                            <a href="{{ route('exercises.take', [$track, $exercise]) }}"
+                            @php
+                                $exRoute = $exercise->type === 'task'
+                                    ? route('exercises.take-task', [$track, $exercise])
+                                    : route('exercises.take', [$track, $exercise]);
+                                $exMeta = $exercise->type === 'task'
+                                    ? '🧠 AI Задача'
+                                    : count($exercise->content) . ' ' . __('вопросов');
+                            @endphp
+                            <a href="{{ $exRoute }}"
                                class="flex-1 h-[90px] border border-black rounded-[25px] flex items-center justify-between px-8 hover:bg-gray-50 transition-colors group">
                                 <div class="flex items-center gap-6">
                                     <span class="text-[20px] text-black/30 font-light w-6">0{{ $index + 1 }}</span>
                                     <div>
                                         <div class="text-[22px] text-black group-hover:underline">{{ $exercise->title }}</div>
                                         <div class="text-[14px] text-black/40 uppercase tracking-widest mt-1">
-                                            {{ count($exercise->content) }} {{ __('вопросов') }} • {{ $exercise->created_at->diffForHumans() }}
+                                            {{ $exMeta }} • {{ $exercise->created_at->diffForHumans() }}
                                         </div>
                                     </div>
                                 </div>

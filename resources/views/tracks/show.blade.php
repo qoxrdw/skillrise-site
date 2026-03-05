@@ -124,9 +124,9 @@
                                 <a href="{{ route('notes.create.handwriting', ['track' => $track->id]) }}" class="flex items-center px-8 py-4 text-[18px] hover:bg-gray-100 border-b border-gray-100">
                                     <span class="mr-3 text-xl">🎨</span> Создать рукописную заметку
                                 </a>
-{{--                                <a href="{{ route('notes.create.voice', ['track' => $track->id]) }}" class="flex items-center px-8 py-4 text-[18px] hover:bg-gray-100">--}}
-{{--                                    <span class="mr-3 text-xl">🎙️</span> Создать голосовую заметку--}}
-{{--                                </a>--}}
+                                {{--                                <a href="{{ route('notes.create.voice', ['track' => $track->id]) }}" class="flex items-center px-8 py-4 text-[18px] hover:bg-gray-100">--}}
+                                {{--                                    <span class="mr-3 text-xl">🎙️</span> Создать голосовую заметку--}}
+                                {{--                                </a>--}}
                             </div>
                         </div>
 
@@ -207,10 +207,21 @@
                             {{-- Задание (Правая часть 40%) --}}
                             @if(isset($track->exercises[$i]))
                                 <div class="w-[40%] relative group">
-                                    <a href="{{ route('exercises.take', ['track' => $track->id, 'exercise' => $track->exercises[$i]->id]) }}"
+                                    @php
+                                        $ex = $track->exercises[$i];
+                                        $exRoute = $ex->type === 'task'
+                                            ? route('exercises.take-task', ['track' => $track->id, 'exercise' => $ex->id])
+                                            : route('exercises.take', ['track' => $track->id, 'exercise' => $ex->id]);
+                                    @endphp
+                                    <a href="{{ $exRoute }}"
                                        class="flex bg-gray-100 h-[85px] border border-black rounded-[25px] items-center justify-between px-8 hover:bg-black/5 transition-colors cursor-pointer">
-                                        <span class="text-[20px] truncate pr-8">{{ $track->exercises[$i]->title }}</span>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                        <div class="min-w-0 flex-1 pr-4">
+                                            <div class="text-[20px] truncate">{{ $ex->title }}</div>
+                                            @if($ex->type === 'task')
+                                                <div class="text-[12px] text-black/40 uppercase tracking-widest mt-0.5">🧠 AI Задача</div>
+                                            @endif
+                                        </div>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="flex-shrink-0"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </a>
                                     {{-- Кнопка удаления упражнения --}}
                                     <form action="{{ route('exercises.destroy', ['track' => $track->id, 'exercise' => $track->exercises[$i]->id]) }}"

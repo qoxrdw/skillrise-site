@@ -5,82 +5,74 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class GeminiService
+class AIService
 {
     protected $apiKey;
-    protected $baseUrl;
-    protected $proxyUrl;
-    protected $useProxy;
+    protected $model;
+    protected $baseUrl = 'https://openrouter.ai/api/v1';
 
     public function __construct()
     {
-        $this->apiKey = config('services.gemini.api_key');
-        $this->proxyUrl = config('services.gemini.proxy_url');
-        $this->baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
-        $this->useProxy = !empty($this->proxyUrl);
+        $this->apiKey = config('services.openrouter.api_key');
+        $this->model  = config('services.openrouter.model', 'meta-llama/llama-3.3-70b-instruct:free');
     }
 
     // ─────────────────────────────────────────────
-    // Общий метод отправки запроса к Gemini
+    // Общий метод отправки запроса к OpenRouter
     // ─────────────────────────────────────────────
     protected function sendRequest(string $prompt): array
     {
-        $modelName = 'gemini-2.0-flash-lite';
-
+        set_time_limit(120);
         try {
-            if ($this->useProxy) {
-                $url = rtrim($this->proxyUrl, '/') . "/v1beta/models/{$modelName}:generateContent?key=" . $this->apiKey;
-                Log::info('Sending request to Gemini via Cloudflare Worker', ['model' => $modelName]);
-            } else {
-                $url = "{$this->baseUrl}/models/{$modelName}:generateContent?key={$this->apiKey}";
-                Log::info('Sending direct request to Gemini API', ['model' => $modelName]);
-            }
+            Log::info('Sending request to OpenRouter', ['model' => $this->model]);
 
-            $response = Http::timeout(60)
-                ->post($url, [
-                    'contents' => [
+            $response = Http::timeout(90)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Content-Type'  => 'application/json',
+                    'HTTP-Referer'  => config('app.url', 'http://localhost'),
+                    'X-Title'       => config('app.name', 'Laravel App'),
+                ])
+                ->post("{$this->baseUrl}/chat/completions", [
+                    'model'    => $this->model,
+                    'messages' => [
                         [
-                            'parts' => [['text' => $prompt]]
+                            'role'    => 'user',
+                            'content' => $prompt,
                         ]
                     ],
-                    'generationConfig' => [
-                        'temperature' => 0.7,
-                        'topK' => 40,
-                        'topP' => 0.95,
-                        'maxOutputTokens' => 8192,
-                    ]
+                    'temperature' => 0.7,
+                    'max_tokens'  => 4096,
                 ]);
 
             if ($response->successful()) {
                 $data = $response->json();
 
-                if (!isset($data['candidates']) || empty($data['candidates'])) {
-                    Log::error('Gemini: no candidates returned.', ['data' => $data]);
-                    return ['success' => false, 'error' => 'API вернул ответ без контента (возможна блокировка по безопасности).'];
-                }
-
-                $generatedText = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                $generatedText = $data['choices'][0]['message']['content'] ?? '';
 
                 if (empty($generatedText)) {
-                    Log::error('Gemini returned empty text', ['data' => $data]);
+                    Log::error('OpenRouter returned empty text', ['data' => $data]);
                     return ['success' => false, 'error' => 'API вернул пустой ответ.'];
                 }
 
-                Log::info('Gemini response received', ['text_length' => strlen($generatedText)]);
+                Log::info('OpenRouter response received', ['text_length' => strlen($generatedText)]);
                 return ['success' => true, 'text' => $generatedText];
             }
 
-            Log::error('Gemini API failed', ['status' => $response->status(), 'response' => $response->body()]);
+            Log::error('OpenRouter API failed', [
+                'status'   => $response->status(),
+                'response' => $response->body(),
+            ]);
             return ['success' => false, 'error' => 'API request failed: ' . $response->body()];
 
         } catch (\Exception $e) {
-            Log::error('Gemini API Error: ' . $e->getMessage());
+            Log::error('OpenRouter API Error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
 
     // ─────────────────────────────────────────────
-    // 1. Генерация Q&A упражнения (старый функционал)
+    // 1. Генерация Q&A упражнения
     // ─────────────────────────────────────────────
     public function generateExerciseFromNote(string $noteContent): array
     {
@@ -92,9 +84,9 @@ class GeminiService
         }
 
         return [
-            'success' => true,
+            'success'  => true,
             'exercise' => $this->parseJSON($result['text']),
-            'raw' => $result['text'],
+            'raw'      => $result['text'],
         ];
     }
 
@@ -119,8 +111,8 @@ class GeminiService
 
         return [
             'success' => true,
-            'task' => $parsed,
-            'raw' => $result['text'],
+            'task'    => $parsed,
+            'raw'     => $result['text'],
         ];
     }
 
@@ -144,9 +136,9 @@ class GeminiService
         }
 
         return [
-            'success' => true,
+            'success'  => true,
             'feedback' => $parsed,
-            'raw' => $result['text'],
+            'raw'      => $result['text'],
         ];
     }
 
@@ -156,7 +148,7 @@ class GeminiService
 
     protected function buildQAPrompt(string $noteContent): string
     {
-        return "На основе следующей заметки создай упражнение из 5-8 вопросов с ответами для самопроверки, ответы пиши с маленькой буквы, без пунктуации.
+        return "На основе следующей заметки создай упражнение из 5-8 вопросов с ответами для самопроверки.
 
 Формат ответа должен быть СТРОГО JSON без markdown разметки:
 {
@@ -181,7 +173,7 @@ class GeminiService
 
     protected function buildTaskPrompt(string $noteContent): string
     {
-        return "На основе следующей заметки придумай одну полноценную практическую задачу для глубокого изучения темы.
+        return "На основе следующей заметки придумай одну полноценную практическую задачу для закрепления темы заметки. Сама задача может стилистически быть связана с другими темами, но не должна требовать от решающего знаний в областях, не упомянутых в заметке.
 
 Формат ответа должен быть СТРОГО JSON без markdown разметки:
 {
@@ -221,7 +213,7 @@ class GeminiService
 Оцени решение и верни СТРОГО JSON без markdown разметки:
 {
   \"score\": 7,
-  \"verdict\": \"Хорошо\" ,
+  \"verdict\": \"Хорошо\",
   \"strengths\": [
     \"Что студент сделал правильно (конкретно)\"
   ],
@@ -234,7 +226,7 @@ class GeminiService
 Требования:
 - score: целое число от 0 до 10
 - verdict: одно слово или короткая фраза (Отлично / Хорошо / Удовлетворительно / Слабо / Не зачтено)
-- strengths: массив строк, минимум 1 пункт (если совсем нет плюсов — напиши «Попытка засчитана»)
+- strengths: массив строк, минимум 1 пункт (если совсем нет плюсов — напиши \"Попытка засчитана\")
 - mistakes: массив строк, пустой массив [] если ошибок нет
 - advice: одно предложение
 - НЕ добавляй markdown разметку
@@ -242,7 +234,7 @@ class GeminiService
     }
 
     // ─────────────────────────────────────────────
-    // Парсинг JSON из ответа Gemini
+    // Парсинг JSON из ответа
     // ─────────────────────────────────────────────
     protected function parseJSON(string $text): ?array
     {
@@ -261,7 +253,10 @@ class GeminiService
             $parsed = json_decode($text, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                Log::error('JSON parse error', ['error' => json_last_error_msg(), 'text' => substr($text, 0, 500)]);
+                Log::error('JSON parse error', [
+                    'error' => json_last_error_msg(),
+                    'text'  => substr($text, 0, 500),
+                ]);
                 return null;
             }
 

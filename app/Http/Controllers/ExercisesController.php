@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 use App\Models\Exercise;
 use App\Models\Track;
 use App\Models\Note;
-use App\Services\GeminiService;
+use App\Services\AIService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ExercisesController extends Controller
 {
-    protected $geminiService;
+    protected $aiService;
 
-    public function __construct(GeminiService $geminiService)
+    public function __construct(AIService $aiService)
     {
-        $this->geminiService = $geminiService;
+        $this->aiService = $aiService;
     }
 
     public function index(Track $track)
@@ -40,8 +40,6 @@ class ExercisesController extends Controller
      */
     public function createWithAI(Track $track)
     {
-
-        // Получаем только текстовые и рукописные заметки (не голосовые)
         $notes = Note::where('track_id', $track->id)
             ->whereIn('type', ['text'])
             ->orderBy('created_at', 'desc')
@@ -51,7 +49,7 @@ class ExercisesController extends Controller
     }
 
     /**
-     * Генерирует упражнение с помощью AI
+     * Генерирует Q&A упражнение с помощью AI
      */
     public function generateWithAI(Request $request, Track $track)
     {
@@ -65,110 +63,195 @@ class ExercisesController extends Controller
             abort(403);
         }
 
-        $noteContent = $note->content;
-
-        // Для рукописных заметок контент - это JSON с текстом
-        if ($note->type === 'handwriting') {
-            $contentData = json_decode($note->content, true);
-            // 🔥 ПРОВЕРКА: Если JSON пуст или не содержит ключа 'text'
-            $noteContent = $contentData['text'] ?? 'Текст не распознан';
-            if ($noteContent === 'Текст не распознан') {
-                Log::error('Handwriting note content is invalid or missing "text" key.', ['note_id' => $note->id, 'content' => $note->content]);
-                return back()->withErrors(['error' => 'Не удалось извлечь текст из рукописной заметки.']);
-            }
+        $noteContent = $this->extractNoteContent($note);
+        if ($noteContent === null) {
+            return back()->withErrors(['error' => 'Не удалось извлечь текст из заметки.']);
         }
 
-        // Генерируем упражнение через Gemini
-        $result = $this->geminiService->generateExerciseFromNote($noteContent);
+        $result = $this->aiService->generateExerciseFromNote($noteContent);
 
-        Log::info('Gemini Generation Result (Parsed)', ['track_id' => $track->id, 'note_id' => $note->id, 'result' => $result]);
+        Log::info('AI Generation Result (QA)', ['track_id' => $track->id, 'note_id' => $note->id, 'result' => $result]);
 
-        // 1. Проверка общего успеха и наличия данных
         if (!isset($result['success']) || $result['success'] !== true || empty($result['exercise'])) {
             Log::error('AI Service failed or returned empty exercise data.', ['result' => $result]);
-            return back()->withErrors(['error' => 'AI-сервис не смог сгенерировать упражнение или вернул ошибку. Проверьте логи сервиса.']);
+            return back()->withErrors(['error' => 'AI-сервис не смог сгенерировать упражнение. Проверьте логи.']);
         }
 
         $exerciseData = $result['exercise'];
 
-        // 2. Дополнительная проверка структуры AI-ответа
         if (!isset($exerciseData['questions']) || !is_array($exerciseData['questions']) || count($exerciseData['questions']) === 0) {
-            Log::error('AI Service returned success=true, but missing or empty "questions" structure.', ['response_data' => $exerciseData]);
-            return back()->withErrors(['error' => 'AI сгенерировал ответ, но в нем отсутствуют вопросы для упражнения.']);
+            return back()->withErrors(['error' => 'AI сгенерировал ответ, но в нем отсутствуют вопросы.']);
         }
 
-        // Формируем content в нужном формате
         $content = [];
         foreach ($exerciseData['questions'] as $item) {
-            // 3. Проверка наличия обязательных ключей для каждого вопроса
             if (isset($item['question']) && isset($item['answer'])) {
                 $content[] = [
                     'question' => $item['question'],
-                    'answer' => $item['answer'],
+                    'answer'   => $item['answer'],
                 ];
-            } else {
-                Log::warning('AI question item missing required keys (question or answer). Skipping item.', ['item' => $item]);
             }
         }
 
-        // Проверяем, что после обработки остались валидные вопросы
         if (empty($content)) {
-            Log::error('Exercise content is empty after validating questions and answers.', ['response_data' => $exerciseData]);
-            return back()->withErrors(['error' => 'AI сгенерировал вопросы, но не смог предоставить валидные ответы. Упражнение пусто.']);
+            return back()->withErrors(['error' => 'AI сгенерировал вопросы, но без валидных ответов.']);
         }
 
-
         $exercise = $track->exercises()->create([
-            // Используем оператор объединения ?? для безопасного получения заголовка
-            'title' => $exerciseData['title'] ?? ('Упражнение на основе: ' . $note->getFirstLine()),
+            'title'   => $exerciseData['title'] ?? ('Упражнение на основе: ' . $note->getFirstLine()),
             'content' => $content,
+            'type'    => 'qa',
             'user_id' => Auth::id(),
         ]);
 
-        Log::info('Exercise successfully created via AI.', ['exercise_id' => $exercise->id]);
-
+        Log::info('QA Exercise created via AI.', ['exercise_id' => $exercise->id]);
 
         return redirect()->route('tracks.show', $track)
             ->with('success', 'Упражнение успешно создано с помощью AI! 🤖');
     }
 
+    /**
+     * Генерирует одну задачу с AI-проверкой
+     */
+    public function generateTaskWithAI(Request $request, Track $track)
+    {
+        $request->validate([
+            'note_id' => 'required|exists:notes,id'
+        ]);
+
+        $note = Note::findOrFail($request->note_id);
+
+        if ($note->track_id !== $track->id) {
+            abort(403);
+        }
+
+        $noteContent = $this->extractNoteContent($note);
+        if ($noteContent === null) {
+            return back()->withErrors(['error' => 'Не удалось извлечь текст из заметки.']);
+        }
+
+        $result = $this->aiService->generateTaskFromNote($noteContent);
+
+        Log::info('AI Task Generation Result', ['track_id' => $track->id, 'note_id' => $note->id, 'result' => $result]);
+
+        if (!$result['success'] || empty($result['task'])) {
+            Log::error('AI Task generation failed.', ['result' => $result]);
+            return back()->withErrors(['error' => 'AI не смог сгенерировать задачу. Попробуйте ещё раз.']);
+        }
+
+        $taskData = $result['task'];
+
+        $exercise = $track->exercises()->create([
+            'title'   => $taskData['title'] ?? ('Задача на основе: ' . $note->getFirstLine()),
+            'content' => [
+                'task'             => $taskData['task'],
+                'hints'            => $taskData['hints'] ?? [],
+                'expected_aspects' => $taskData['expected_aspects'] ?? [],
+            ],
+            'type'    => 'task',
+            'user_id' => Auth::id(),
+        ]);
+
+        Log::info('Task Exercise created via AI.', ['exercise_id' => $exercise->id]);
+
+        return redirect()->route('exercises.take-task', [$track, $exercise])
+            ->with('success', 'Задача сгенерирована! Попробуйте её решить. 🧠');
+    }
+
+    /**
+     * Страница прохождения задачи (type=task)
+     */
+    public function takeTask(Track $track, Exercise $exercise)
+    {
+        if ($exercise->track_id !== $track->id || $track->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($exercise->type !== 'task') {
+            abort(404);
+        }
+
+        return view('exercises.take-task', compact('exercise', 'track'));
+    }
+
+    /**
+     * Отправка решения задачи на проверку AI
+     */
+    public function submitTask(Request $request, Track $track, Exercise $exercise)
+    {
+        if ($exercise->track_id !== $track->id || $track->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'solution' => 'required|string|min:10',
+        ], [
+            'solution.required' => 'Напишите ваше решение перед отправкой.',
+            'solution.min'      => 'Решение слишком короткое. Напишите хотя бы несколько предложений.',
+        ]);
+
+        $content         = $exercise->content;
+        $taskDescription = $content['task'] ?? '';
+
+        $result = $this->aiService->checkSolution(
+            $exercise->title,
+            $taskDescription,
+            $request->input('solution')
+        );
+
+        Log::info('AI Solution Check Result', ['exercise_id' => $exercise->id, 'result' => $result]);
+
+        if (!$result['success'] || empty($result['feedback'])) {
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'AI не смог проверить решение. Попробуйте ещё раз.']);
+        }
+
+        session()->flash('feedback', $result['feedback']);
+        session()->flash('user_solution', $request->input('solution'));
+
+        return redirect()->route('exercises.take-task', [$track, $exercise]);
+    }
+
+    // ─────────────────────────────────────────────
+    // Стандартные методы (без изменений)
+    // ─────────────────────────────────────────────
+
     public function store(Request $request, Track $track)
     {
-
         Log::info('Store request data', $request->all());
 
         $request->validate([
-            'title' => 'required|string|max:255',
-            'questions' => 'required|array',
+            'title'       => 'required|string|max:255',
+            'questions'   => 'required|array',
             'questions.*' => 'required|string',
-            'answers' => 'required|array',
-            'answers.*' => 'required|string',
+            'answers'     => 'required|array',
+            'answers.*'   => 'required|string',
         ], [
-            'questions.required' => 'Необходимо добавить хотя бы один вопрос.',
+            'questions.required'   => 'Необходимо добавить хотя бы один вопрос.',
             'questions.*.required' => 'Текст вопроса не может быть пустым.',
-            'answers.*.required' => 'Правильный ответ не может быть пустым.',
+            'answers.*.required'   => 'Правильный ответ не может быть пустым.',
         ]);
 
         try {
-            $content = [];
+            $content   = [];
             $questions = $request->input('questions', []);
-            $answers = $request->input('answers', []);
-
-            Log::info('Questions and answers', ['questions' => $questions, 'answers' => $answers]);
+            $answers   = $request->input('answers', []);
 
             foreach ($questions as $index => $question) {
                 if (isset($answers[$index])) {
                     $content[] = [
                         'question' => $question,
-                        'answer' => $answers[$index],
+                        'answer'   => $answers[$index],
                     ];
                 }
             }
 
             $exercise = $track->exercises()->create([
-                'title' => $request->title,
-                'content' => $content,
-                'user_id' => Auth::id(),
+                'title'    => $request->title,
+                'content'  => $content,
+                'type'     => 'qa',
+                'user_id'  => Auth::id(),
                 'track_id' => $track->id,
             ]);
 
@@ -196,21 +279,21 @@ class ExercisesController extends Controller
         }
 
         $request->validate([
-            'answers' => 'required|array',
+            'answers'   => 'required|array',
             'answers.*' => 'required|string',
         ]);
 
-        $content = $exercise->content;
+        $content     = $exercise->content;
         $userAnswers = $request->input('answers', []);
-        $results = [];
+        $results     = [];
 
         foreach ($content as $index => $item) {
             $isCorrect = isset($userAnswers[$index]) && $userAnswers[$index] === $item['answer'];
             $results[] = [
-                'question' => $item['question'],
+                'question'       => $item['question'],
                 'correct_answer' => $item['answer'],
-                'user_answer' => $userAnswers[$index] ?? null,
-                'is_correct' => $isCorrect,
+                'user_answer'    => $userAnswers[$index] ?? null,
+                'is_correct'     => $isCorrect,
             ];
         }
 
@@ -226,5 +309,24 @@ class ExercisesController extends Controller
         }
         $exercise->delete();
         return redirect()->route('tracks.show', $track)->with('success', 'Упражнение успешно удалено.');
+    }
+
+    // ─────────────────────────────────────────────
+    // Вспомогательные методы
+    // ─────────────────────────────────────────────
+
+    private function extractNoteContent(Note $note): ?string
+    {
+        if ($note->type === 'handwriting') {
+            $contentData = json_decode($note->content, true);
+            $text        = $contentData['text'] ?? null;
+            if (!$text) {
+                Log::error('Handwriting note missing "text" key.', ['note_id' => $note->id]);
+                return null;
+            }
+            return $text;
+        }
+
+        return $note->content;
     }
 }

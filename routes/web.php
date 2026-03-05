@@ -76,16 +76,22 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    // Маршруты для упражнений, вложенные в треки
+// Маршруты для упражнений, вложенные в треки
     Route::get('/tracks/{track}/exercises', [ExercisesController::class, 'index'])->name('exercises.index');
     Route::get('/tracks/{track}/exercises/create', [ExercisesController::class, 'create'])->name('exercises.create');
     Route::post('/tracks/{track}/exercises', [ExercisesController::class, 'store'])->name('exercises.store');
-    Route::get('/tracks/{track}/exercises/{exercise}/take', [ExercisesController::class, 'take'])->name('exercises.take');
-    Route::post('/tracks/{track}/exercises/{exercise}/submit', [ExercisesController::class, 'submit'])->name('exercises.submit');
-    Route::delete('/tracks/{track}/exercises/{exercise}', [ExercisesController::class, 'destroy'])->name('exercises.destroy');
-    // AI генерация упражнений
+
+    // ↓↓↓ ВСЕ СТАТИЧЕСКИЕ AI-МАРШРУТЫ — ПЕРЕД МАРШРУТАМИ С {exercise} ↓↓↓
     Route::get('/tracks/{track}/exercises/create-ai', [ExercisesController::class, 'createWithAI'])->name('exercises.create-ai');
     Route::post('/tracks/{track}/exercises/generate-ai', [ExercisesController::class, 'generateWithAI'])->name('exercises.generate-ai');
+    Route::post('/tracks/{track}/exercises/generate-task-ai', [ExercisesController::class, 'generateTaskWithAI'])->name('exercises.generate-task-ai');
+
+    // ↓↓↓ МАРШРУТЫ С {exercise} — ТОЛЬКО ПОСЛЕ ВСЕХ СТАТИЧЕСКИХ ↓↓↓
+    Route::get('/tracks/{track}/exercises/{exercise}/take', [ExercisesController::class, 'take'])->name('exercises.take');
+    Route::get('/tracks/{track}/exercises/{exercise}/take-task', [ExercisesController::class, 'takeTask'])->name('exercises.take-task');
+    Route::post('/tracks/{track}/exercises/{exercise}/submit', [ExercisesController::class, 'submit'])->name('exercises.submit');
+    Route::post('/tracks/{track}/exercises/{exercise}/submit-task', [ExercisesController::class, 'submitTask'])->name('exercises.submit-task');
+    Route::delete('/tracks/{track}/exercises/{exercise}', [ExercisesController::class, 'destroy'])->name('exercises.destroy');
 
 
     // Удалены старые маршруты для упражнений, которые больше не используются

@@ -110,10 +110,21 @@
                                     {{-- Упражнение (правая колонка, 30% ширины) --}}
                                     <div class="col-span-3">
                                         @if(isset($exercises[$i]))
-                                            <a href="{{ route('exercises.take', ['track' => $track->id, 'exercise' => $exercises[$i]->id]) }}"
+                                            @php
+                                                $ex = $exercises[$i];
+                                                $exRoute = $ex->type === 'task'
+                                                    ? route('exercises.take-task', ['track' => $track->id, 'exercise' => $ex->id])
+                                                    : route('exercises.take', ['track' => $track->id, 'exercise' => $ex->id]);
+                                            @endphp
+                                            <a href="{{ $exRoute }}"
                                                class="block w-full h-[80px] bg-black/5 border-2 border-black rounded-[25px] flex items-center justify-between px-6 text-[22px] hover:bg-black/10 transition-colors">
-                                                <span class="truncate">{{ $exercises[$i]->title }}</span>
-                                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                                <div class="min-w-0 flex-1 pr-4">
+                                                    <div class="truncate">{{ $ex->title }}</div>
+                                                    @if($ex->type === 'task')
+                                                        <div class="text-[11px] text-black/40 uppercase tracking-widest">🧠 AI Задача</div>
+                                                    @endif
+                                                </div>
+                                                <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                             </a>
                                         @endif
                                     </div>
