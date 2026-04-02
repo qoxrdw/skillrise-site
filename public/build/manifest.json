@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-Dgj65F2X.css",
+    "file": "assets/app-BhEDokA5.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -23,13 +23,13 @@
     "isEntry": true
   },
   "resources/js/notes-create.js": {
-    "file": "assets/notes-create-DpIArhh2.js",
+    "file": "assets/notes-create-yLzBnxgH.js",
     "name": "notes-create",
     "src": "resources/js/notes-create.js",
     "isEntry": true
   },
   "resources/js/notes-edit.js": {
-    "file": "assets/notes-edit-DpIArhh2.js",
+    "file": "assets/notes-edit-Dqb7CN2Y.js",
     "name": "notes-edit",
     "src": "resources/js/notes-edit.js",
     "isEntry": true
